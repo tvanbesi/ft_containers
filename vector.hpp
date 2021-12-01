@@ -23,7 +23,7 @@ namespace ft {
 
 		explicit vector
 			(const allocator_type& alloc = allocator_type())
-		: _head(0)
+		: _head(0), _size(0)
 		{
 		}
 
@@ -34,10 +34,19 @@ namespace ft {
 		explicit vector
 			(size_type n, const value_type& val = value_type(),
 			const allocator_type& alloc = allocator_type())
+		: _size(n)
 		{
 			allocator_type allocator = alloc;
-			_head = allocator.allocate(n);
-			for (size_type i = 0; i < n; i++) { _head[i] = val; } // incrementer le pointeur pour plus de speed
+
+			_head = allocator.allocate(_size);
+			for (size_type i = 0; i < _size; i++) { _head[i] = val; } // incrementer le pointeur pour plus de speed
+		}
+
+		~vector()
+		{
+			allocator_type allocator = allocator_type();
+
+			allocator.deallocate(_head, _size);
 		}
 
 	protected:
@@ -45,6 +54,7 @@ namespace ft {
 	private:
 
 		pointer			_head;
+		size_type		_size;
 
 	};
 }
