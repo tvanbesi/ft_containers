@@ -26,38 +26,32 @@ namespace ft {
 			(const allocator_type& alloc = allocator_type())
 		: _head(0), _size(0), _allocator(alloc)
 		{
-			std::cout << "MADE AN EMPTY VECTOR" << std::endl;
+			std::cout << "made an empty vector" << std::endl;
 		}
 
-		/*
-		**	Why allocator parameter is const ref? So that you don't have to make sure the allocator
-		**	not destroyed and can just copy it and then use it
-		*/
 		explicit vector
 			(size_type n, const value_type& val = value_type(),
 			const allocator_type& alloc = allocator_type())
-		//: _size(n), _allocator(alloc)
-		: _size(n)
+		: _size(n), _allocator(alloc)
 		{
-			std::cout << "HELLO" << std::endl;
-			_allocator = alloc;
 			_head = _allocator.allocate(_size);
-			for (size_type i = 0; i < _size; i++) { _head[i] = val; } // incrementer le pointeur pour plus de speed
-			std::cout << "MADE AN FILLED VECTOR" << std::endl;
-			for (int i = 0; i < _size; i++) { std::cout << _head[i] << "\t" << &_head[i] << std::endl; }
+			for (size_type i = 0; i < _size; i++) { _head[i] = val; }
+			std::cout << "made an filled vector" << std::endl;
 		}
 
-		template <class InputIterator>
-		vector
-			(InputIterator first, InputIterator last,
-			const allocator_type& alloc = allocator_type())
-		{
-
-		}
+		//template <class InputIterator>
+		//vector
+		//	(InputIterator first, InputIterator last,	
+		//	const allocator_type& alloc = allocator_type())
+		//: _allocator(alloc)
+		//{
+		//	std::cout << "made a range vector" << std::endl;
+		//}
 
 		~vector()
 		{
-			//_allocator.deallocate(_head, _size);
+			std::cout << "destroying vector" << std::endl;
+			_allocator.deallocate(_head, _size);
 		}
 
 	private:
