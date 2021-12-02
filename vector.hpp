@@ -50,7 +50,7 @@ namespace ft {
 
 		explicit vector
 			(const allocator_type& alloc = allocator_type())
-		: _head(0), _size(0), _alloc(alloc)
+		: _vector(0), _size(0), _alloc(alloc)
 		{
 			std::cout << "made an empty vector" << std::endl;
 		}
@@ -60,8 +60,8 @@ namespace ft {
 			const allocator_type& alloc = allocator_type())
 		: _size(n), _alloc(alloc)
 		{
-			_head = _alloc.allocate(_size);
-			for (size_type i = 0; i < _size; i++) { _head[i] = val; }
+			_vector = _alloc.allocate(_size);
+			for (size_type i = 0; i < _size; i++) { _vector[i] = val; }
 			std::cout << "made an filled vector" << std::endl;
 		}
 
@@ -72,7 +72,6 @@ namespace ft {
 			typename enable_if<!is_integral<InputIterator>::value>::type = 0)
 		: _alloc(alloc)
 		{
-			
 			std::cout << "made a range vector" << std::endl;
 		}
 
@@ -85,12 +84,12 @@ namespace ft {
 		~vector()
 		{
 			std::cout << "destroying vector" << std::endl;
-			_alloc.deallocate(_head, _size);
+			_alloc.deallocate(_vector, _size);
 		}
 
 	private:
 
-		pointer			_head;
+		pointer			_vector;
 		size_type		_size;
 		allocator_type	_alloc;
 
