@@ -3,11 +3,19 @@
 
 namespace ft {
 
+	/*
+	**	enable_if class template
+	*/
+
 	template <bool Cond, class T = void>
 	struct enable_if {};
 
 	template <class T>
 	struct enable_if<true, T> {typedef T type; };
+
+	/*
+	**	is_integral class template
+	*/
 
 	template <class T>
 	struct is_integral { static const bool value = false; };
@@ -17,12 +25,6 @@ namespace ft {
 
 	template <>
 	struct is_integral<char> { static const bool value = true; };
-
-	template <>
-	struct is_integral<char16_t> { static const bool value = true; };
-
-	template <>
-	struct is_integral<char32_t> { static const bool value = true; };
 
 	template <>
 	struct is_integral<wchar_t> { static const bool value = true; };
