@@ -53,6 +53,7 @@ namespace ft {
 			(const allocator_type& alloc = allocator_type())
 		: _vector(0), _size(0), _capacity(0), _alloc(alloc)
 		{
+			_vector = _alloc.allocate(_size);
 			std::cout << "made an empty vector" << std::endl;
 		}
 
@@ -63,7 +64,6 @@ namespace ft {
 		{
 			_vector = _alloc.allocate(_size);
 			for (size_type i = 0; i < _size; ++i) { _alloc.construct(&_vector[i], val); }
-			// for (int i = 0; i < _size; ++i) { std::cout << &_vector[i] << "\t" << _vector[i] << std::endl; }
 			std::cout << "made an filled vector" << std::endl;
 		}
 
@@ -76,7 +76,6 @@ namespace ft {
 		{
 			_vector = _alloc.allocate(_size);
 			for (size_type i = 0; i < _size; ++i, ++first) { _alloc.construct(&_vector[i], *first); }
-			// for (int i = 0; i < _size; ++i) { std::cout << &_vector[i] << "\t" << _vector[i] << std::endl; }
 			std::cout << "made a range vector" << std::endl;
 		}
 
@@ -87,13 +86,13 @@ namespace ft {
 			_vector = _alloc.allocate(_size);
 			const_iterator first = x.begin();
 			for	(size_type i = 0; i < _size; ++i, ++first) { _alloc.construct(&_vector[i], *first); }
-			// for (int i = 0; i < _size; ++i) { std::cout << &_vector[i] << "\t" << _vector[i] << std::endl; }
 			std::cout << "made a copied vector" << std::endl;
 		}
 
 		vector& operator= (const vector& x)
 		{
-			//need to do assign first
+			this->assign(x.begin(), x.end());
+			return *this;
 		}
 
 		~vector()
@@ -123,11 +122,12 @@ namespace ft {
 
 		template <class InputIterator>
 		void
-			assign(InputIterator first, InputIterator last)
+			assign(InputIterator first, InputIterator last,
+			typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
 		{
 			for (size_type i = 0; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
-			size_type new_size = first - last;
-			if (new_size > _capacity) { _alloc.deallocate(_vector, _size); _alloc.allocate(new_size); }
+			size_type new_size = last - first;
+			if (new_size > _capacity) { _alloc.deallocate(_vector, _size); _vector = _alloc.allocate(new_size); }
 			_size = new_size;
 			for (size_type i = 0; i < _size; ++i, ++first) { _alloc.construct(&_vector[i], *first); }
 		}
@@ -135,6 +135,10 @@ namespace ft {
 		void
 			assign(size_type n, const value_type& val)
 		{
+			for (size_type i = 0; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
+			if (n > _capacity) { _alloc.deallocate(_vector, _size); _vector = _alloc.allocate(n); }
+			_size = n;
+			for (size_type i = 0; i < _size; ++i) { _vector[i] = val; }
 		}
 
 	private:

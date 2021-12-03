@@ -1,0 +1,9 @@
+logaritmicly growing vector check how the real one behaves (probably keeps a copy of original
+size (min 1 I guess))
+
+assign:range iterator category
+
+Additionally, in the range version (1), if InputIterator is not at least of a forward iterator
+category (i.e., it is just an input iterator) the new capacity cannot be determined beforehand
+and the operation incurs in additional logarithmic complexity in the new size (reallocations
+while growing).
