@@ -24,10 +24,10 @@ int
 	//ft::vector<int>::iterator it = vector_fill.begin();
 	//std::cout << *it++ << std::endl;
 
-	ft::vector<int>::iterator bit = vector_fill.begin();
-	ft::vector<int>::iterator eit = vector_fill.end();
-	std::cout << &bit << "\t" << *bit << std::endl;
-	std::cout << &eit << "\t" << *eit << std::endl;
+	// ft::vector<int>::iterator bit = vector_fill.begin();
+	// ft::vector<int>::iterator eit = vector_fill.end();
+	// std::cout << &bit << "\t" << *bit << std::endl;
+	// std::cout << &eit << "\t" << *eit << std::endl;
 	ft::vector<int> vector_range (vector_fill.begin(), vector_fill.end());
 	ft::vector<int> vector_cpy (vector_range);
 
