@@ -209,7 +209,8 @@ namespace ft {
 		iterator
 			insert(iterator position, const value_type& val)
 		{
-			if (position == this->end()) { this->push_back(val); }
+			size_type pos_n;
+			if (position == this->end()) { this->push_back(val); pos_n = _size - 1; }
 			else
 			{
 				pointer tmp = _alloc.allocate(_size + 1);
@@ -223,6 +224,7 @@ namespace ft {
 					++current;
 				}
 				tmp[i] = val;
+				pos_n = i;
 				while (current != last)
 				{
 					++i;
@@ -234,7 +236,7 @@ namespace ft {
 				_size++;
 				_capacity = _size + 1;
 			}
-			return position;
+			return iterator(_vector + pos_n);
 		}
 
 	private:
