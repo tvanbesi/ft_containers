@@ -234,7 +234,7 @@ namespace ft {
 				this->~vector();
 				_vector = tmp;
 				_size++;
-				_capacity = _size + 1;
+				_capacity = _size;
 			}
 			return iterator(_vector + pos_n);
 		}
@@ -266,7 +266,7 @@ namespace ft {
 				this->~vector();
 				_vector = tmp;
 				_size += n;
-				_capacity = _size + n;
+				_capacity = _size;
 			}
 		}
 
