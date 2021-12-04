@@ -51,7 +51,7 @@ namespace ft {
 
 		explicit vector
 			(const allocator_type& alloc = allocator_type())
-		: _vector(0), _size(0), _capacity(0), _alloc(alloc)
+		: _size(0), _capacity(0), _alloc(alloc)
 		{
 			_vector = _alloc.allocate(_size);
 			std::cout << "made an empty vector" << std::endl;
@@ -98,7 +98,8 @@ namespace ft {
 		~vector()
 		{
 			std::cout << "destroying vector" << std::endl;
-			_alloc.deallocate(_vector, _size);
+			for (size_type i = 0; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
+			_alloc.deallocate(_vector, _capacity);
 		}
 
 		/*
@@ -114,7 +115,34 @@ namespace ft {
 		**	Capacity
 		*/
 
+		size_type size() const { return _size; }
+
+		size_type max_size() const { return _alloc.max_size(); }
+
+		void
+			resize(size_type n, value_type val = value_type())
+		{
+			if (n < _size)
+			{
+				for (size_type i = n; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
+			}
+			else if (n > _size)
+			{
+				if (n > _capacity) { reallocate(n); }
+				for (size_type i = _size; i < n; ++i) { _vector[i] = val; }
+			}
+			_size = n;
+		}
+
 		size_type capacity() const { return _capacity; }
+
+		bool empty() const { return _size == 0; }
+
+		void
+			reserve(size_type n)
+		{
+			if (n > _capacity) { reallocate(n); }
+		}
 
 		/*
 		**	Modifiers
@@ -127,7 +155,7 @@ namespace ft {
 		{
 			for (size_type i = 0; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
 			size_type new_size = last - first;
-			if (new_size > _capacity) { _alloc.deallocate(_vector, _size); _vector = _alloc.allocate(new_size); }
+			if (new_size > _capacity) { _alloc.deallocate(_vector, _capacity); _vector = _alloc.allocate(new_size); }
 			_size = new_size;
 			for (size_type i = 0; i < _size; ++i, ++first) { _alloc.construct(&_vector[i], *first); }
 		}
@@ -136,17 +164,35 @@ namespace ft {
 			assign(size_type n, const value_type& val)
 		{
 			for (size_type i = 0; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
-			if (n > _capacity) { _alloc.deallocate(_vector, _size); _vector = _alloc.allocate(n); }
+			if (n > _capacity) { _alloc.deallocate(_vector, _capacity); _vector = _alloc.allocate(n); }
 			_size = n;
 			for (size_type i = 0; i < _size; ++i) { _vector[i] = val; }
 		}
 
 	private:
 
+		/*
+		**	Private member variables
+		*/
+
 		pointer			_vector;
 		size_type		_size;
 		size_type		_capacity;
 		allocator_type	_alloc;
+
+		/*
+		**	Private member fonctions
+		*/
+
+		void
+			reallocate(size_type n)
+		{
+			pointer tmp = _alloc.allocate(n); //see notes.txt, logarithmic growth
+			for (size_type i = 0; i < _size; ++i) { _alloc.construct(&tmp[i], _vector[i]); }
+			this->~vector();
+			_capacity = n;
+			_vector = tmp;
+		}
 
 	};
 

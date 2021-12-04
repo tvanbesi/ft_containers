@@ -55,6 +55,38 @@ int
 	for (ft::vector<int>::iterator it = v8.begin(); it != v8.end(); ++it)
 		std::cout << ' ' << *it;
 	std::cout << std::endl;
+	std::cout << "v8.resize(10, 69)" << std::endl;
+	v8.resize(10, 69);
+	std::cout << "v8 content: ";
+	for (ft::vector<int>::iterator it = v8.begin(); it != v8.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
+	std::cout << "v8.resize(14)" << std::endl;
+	v8.resize(14);
+	std::cout << "v8 content: ";
+	for (ft::vector<int>::iterator it = v8.begin(); it != v8.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
+
+	std::vector<char> v_char;
+	std::vector<int> v_int;
+	std::vector<double> v_double;
+	std::vector<unsigned long long int> v_lli;
+
+	std::cout << v_char.max_size() << std::endl;
+	std::cout << v_int.max_size() << std::endl;
+	std::cout << v_double.max_size() << std::endl;
+	std::cout << v_lli.max_size() << std::endl;
+
+	ft::vector<char> ft_v_char;
+	ft::vector<int> ft_v_int;
+	ft::vector<double> ft_v_double;
+	ft::vector<unsigned long long int> ft_v_lli;
+
+	std::cout << ft_v_char.max_size() << std::endl;
+	std::cout << ft_v_int.max_size() << std::endl;
+	std::cout << ft_v_double.max_size() << std::endl;
+	std::cout << ft_v_lli.max_size() << std::endl;
 
 	return (0);
 }
