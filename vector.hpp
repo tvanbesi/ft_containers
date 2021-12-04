@@ -270,6 +270,40 @@ namespace ft {
 			}
 		}
 
+		template <class InputIterator>
+		void
+			insert(iterator position, InputIterator first, InputIterator last,
+			typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
+		{
+			size_type n = last - first;
+			pointer tmp = _alloc.allocate(_size + n);
+			iterator current = this->begin();
+			iterator last_this = this->end();
+			size_type i = 0;
+			while (current != position)
+			{
+				_alloc.construct(&tmp[i], *current);
+				++i;
+				++current;
+			}
+			while (first != last)
+			{
+				tmp[i] = *first;
+				++i;
+				++first;
+			}
+			while (current != last_this)
+			{
+				_alloc.construct(&tmp[i], *current);
+				++i;
+				++current;
+			}
+			this->~vector();
+			_vector = tmp;
+			_size += n;
+			_capacity = _size;
+		}
+
 	private:
 
 		/*
