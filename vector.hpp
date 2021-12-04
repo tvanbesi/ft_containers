@@ -2,6 +2,7 @@
 # define VECTOR_HPP
 
 # include <memory>
+# include <stdexcept>
 # include "type_traits.hpp"
 # include "iterator.hpp"
 # include "iterator_vector.hpp"
@@ -143,6 +144,27 @@ namespace ft {
 		{
 			if (n > _capacity) { reallocate(n); }
 		}
+
+		/*
+		**	Element access
+		*/
+
+		reference operator[](size_type n) { return _vector[n]; }
+		const_reference operator[] (size_type n) const { return _vector[n]; }
+		reference at(size_type n)
+		{
+			if (n < 0 || n > _size - 1) { throw std::out_of_range(""); }
+			return _vector[n];
+		}
+		const_reference at(size_type n) const
+		{
+			if (n < 0 || n > _size - 1) { throw std::out_of_range(""); }
+			return _vector[n];
+		}
+		reference front() { return _vector[0]; }
+		const_reference front() const { return _vector[0]; }
+		reference back() { return _vector[_size - 1]; }
+		const_reference back() const { return _vector[_size - 1]; }
 
 		/*
 		**	Modifiers

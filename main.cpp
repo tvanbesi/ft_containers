@@ -67,6 +67,8 @@ int
 	for (ft::vector<int>::iterator it = v8.begin(); it != v8.end(); ++it)
 		std::cout << ' ' << *it;
 	std::cout << std::endl;
+	std::cout << "v8[0], v8[5], v8[10]" << std::endl;
+	std::cout << v8[0] << ", " << v8[5] << ", " << v8[10] << std::endl;
 
 	std::vector<char> v_char;
 	std::vector<int> v_int;
@@ -87,6 +89,12 @@ int
 	std::cout << ft_v_int.max_size() << std::endl;
 	std::cout << ft_v_double.max_size() << std::endl;
 	std::cout << ft_v_lli.max_size() << std::endl;
+
+	//std::vector<int> v_error (10, 10);
+	//std::cout << v_error.at(10) << std::endl;
+	//ft::vector<int> v_error_ft (10, 10);
+	//std::cout << v_error_ft.at(10) << std::endl;
+
 
 	return (0);
 }
