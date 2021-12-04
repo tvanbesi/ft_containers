@@ -206,6 +206,37 @@ namespace ft {
 			_size--;
 		}
 
+		iterator
+			insert(iterator position, const value_type& val)
+		{
+			if (position == this->end()) { this->push_back(val); }
+			else
+			{
+				pointer tmp = _alloc.allocate(_size + 1);
+				iterator current = this->begin();
+				iterator last = this->end();
+				size_type i = 0;
+				while (current != position)
+				{
+					_alloc.construct(&tmp[i], *current);
+					++i;
+					++current;
+				}
+				tmp[i] = val;
+				while (current != last)
+				{
+					++i;
+					_alloc.construct(&tmp[i], *current);
+					++current;
+				}
+				this->~vector();
+				_vector = tmp;
+				_size++;
+				_capacity = _size + 1;
+			}
+			return position;
+		}
+
 	private:
 
 		/*
