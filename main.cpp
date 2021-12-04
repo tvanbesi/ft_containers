@@ -69,6 +69,29 @@ int
 	std::cout << std::endl;
 	std::cout << "v8[0], v8[5], v8[10]" << std::endl;
 	std::cout << v8[0] << ", " << v8[5] << ", " << v8[10] << std::endl;
+	std::cout << "v1.push_back(5)" << std::endl;
+	v1.push_back(5);
+	std::cout << "v1 content: ";
+	for (ft::vector<int>::iterator it = v1.begin(); it != v1.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
+	std::cout << "v1.push_back(10)" << std::endl;
+	v1.push_back(10);
+	std::cout << "v1 content: ";
+	for (ft::vector<int>::iterator it = v1.begin(); it != v1.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
+	std::cout << "v1.push_back(15)" << std::endl;
+	v1.push_back(15);
+	std::cout << "v1 content: ";
+	for (ft::vector<int>::iterator it = v1.begin(); it != v1.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
+	std::cout << "v1.pop_back()" << std::endl;
+	v1.pop_back();
+	for (ft::vector<int>::iterator it = v1.begin(); it != v1.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
 
 	std::vector<char> v_char;
 	std::vector<int> v_int;

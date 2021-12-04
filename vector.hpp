@@ -191,6 +191,21 @@ namespace ft {
 			for (size_type i = 0; i < _size; ++i) { _vector[i] = val; }
 		}
 
+		void
+			push_back(const value_type& val)
+		{
+			if (_size + 1 > _capacity) { reallocate(_size + 1); }
+			_vector[_size] = val;
+			_size++;
+		}
+
+		void
+			pop_back()
+		{
+			_alloc.destroy(&(this->back()));
+			_size--;
+		}
+
 	private:
 
 		/*

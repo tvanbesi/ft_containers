@@ -1,5 +1,5 @@
 logaritmicly growing vector check how the real one behaves (probably keeps a copy of original
-size (min 1 I guess)), same question for reserve
+size (min 1 I guess)), same question for reserve, all modifiers functions that use my reallocate
 
 assign:range iterator category
 
