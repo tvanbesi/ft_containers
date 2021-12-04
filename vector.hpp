@@ -276,32 +276,45 @@ namespace ft {
 			typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
 		{
 			size_type n = last - first;
-			pointer tmp = _alloc.allocate(_size + n);
-			iterator current = this->begin();
-			iterator last_this = this->end();
-			size_type i = 0;
-			while (current != position)
+			if (position == this->end())
 			{
-				_alloc.construct(&tmp[i], *current);
-				++i;
-				++current;
+				if (_size + n > _capacity)
+					reallocate(_size + n);
+				while (first != last)
+				{
+					this->push_back(*first);
+					++first;
+				}
 			}
-			while (first != last)
+			else
 			{
-				tmp[i] = *first;
-				++i;
-				++first;
+				pointer tmp = _alloc.allocate(_size + n);
+				iterator current = this->begin();
+				iterator last_this = this->end();
+				size_type i = 0;
+				while (current != position)
+				{
+					_alloc.construct(&tmp[i], *current);
+					++i;
+					++current;
+				}
+				while (first != last)
+				{
+					tmp[i] = *first;
+					++i;
+					++first;
+				}
+				while (current != last_this)
+				{
+					_alloc.construct(&tmp[i], *current);
+					++i;
+					++current;
+				}
+				this->~vector();
+				_vector = tmp;
+				_capacity = _size + n;
 			}
-			while (current != last_this)
-			{
-				_alloc.construct(&tmp[i], *current);
-				++i;
-				++current;
-			}
-			this->~vector();
-			_vector = tmp;
 			_size += n;
-			_capacity = _size;
 		}
 
 	private:
