@@ -384,6 +384,12 @@ namespace ft {
 			_size = 0;
 		}
 
+		/*
+		**	Allocator
+		*/
+
+		allocator_type get_allocator() const { return _alloc; }
+
 	private:
 
 		/*
