@@ -18,7 +18,6 @@ namespace ft {
 		typedef typename	iterator_traits::reference						reference;
 		typedef typename	iterator_traits::iterator_category				iterator_category;
 
-		iterator_vector() : _p(0) {}
 		iterator_vector(pointer p) : _p(p) {}
 		~iterator_vector(void) {}
 

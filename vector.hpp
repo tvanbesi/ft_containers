@@ -324,16 +324,16 @@ namespace ft {
 			if (position == last - 1) { this->pop_back(); }
 			else
 			{
-				iterator next;
-				next = position + 1;
+				iterator next = position + 1;
 				while (next != last)
 				{
 					_alloc.destroy(&(*position));
 					_alloc.construct(&(*position), *next);
 					++position;
-					next = position + 1;
+					++next;
 				}
 				_alloc.destroy(&(*position));
+				_size--;
 			}
 			return --position;
 		}
