@@ -338,6 +338,31 @@ namespace ft {
 			return --position;
 		}
 
+		iterator
+			erase(iterator first, iterator last)
+		{
+			iterator end = this->end();
+			if (last == end)
+			{
+				while (first != end) { _alloc.destroy(&(*first)); ++first; --_size; }
+				return this->end();
+			}
+			else
+			{
+				iterator r = last;
+				_size -= last - first;
+				while (last != end)
+				{
+					_alloc.destroy(&(*first));
+					_alloc.construct(&(*first), *last);
+					++first;
+					++last;
+				}
+				while (first != end) { _alloc.destroy(&(*first)); ++first; }
+				return r;
+			}
+		}
+
 	private:
 
 		/*
