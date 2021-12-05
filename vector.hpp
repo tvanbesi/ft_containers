@@ -377,6 +377,13 @@ namespace ft {
 			x._capacity = tmp_capacity;
 		}
 
+		void
+			clear()
+		{
+			for (size_type i = 0; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
+			_size = 0;
+		}
+
 	private:
 
 		/*
