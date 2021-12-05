@@ -317,6 +317,27 @@ namespace ft {
 			_size += n;
 		}
 
+		iterator
+			erase(iterator position)
+		{
+			iterator last = this->end();
+			if (position == last - 1) { this->pop_back(); }
+			else
+			{
+				iterator next;
+				next = position + 1;
+				while (next != last)
+				{
+					_alloc.destroy(&(*position));
+					_alloc.construct(&(*position), *next);
+					++position;
+					next = position + 1;
+				}
+				_alloc.destroy(&(*position));
+			}
+			return --position;
+		}
+
 	private:
 
 		/*
