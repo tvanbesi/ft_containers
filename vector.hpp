@@ -403,10 +403,13 @@ namespace ft {
 		void
 			reallocate(size_type n)
 		{
-			pointer tmp = _alloc.allocate(n); //see notes.txt, logarithmic growth
+			size_type new_capacity = _capacity == 0 ? 1 : _capacity * 2;
+			while (new_capacity < n)
+				new_capacity *= 2;
+			pointer tmp = _alloc.allocate(new_capacity);
 			for (size_type i = 0; i < _size; ++i) { _alloc.construct(&tmp[i], _vector[i]); }
 			this->~vector();
-			_capacity = n;
+			_capacity = new_capacity;
 			_vector = tmp;
 		}
 
