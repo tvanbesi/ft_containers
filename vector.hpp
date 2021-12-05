@@ -363,6 +363,20 @@ namespace ft {
 			}
 		}
 
+		void
+			swap(vector& x)
+		{
+			pointer tmp_vector = _vector;
+			size_type tmp_size = _size;
+			size_type tmp_capacity = _capacity;
+			_vector = x._vector;
+			_size = x._size;
+			_capacity = x._capacity;
+			x._vector = tmp_vector;
+			x._size = tmp_size;
+			x._capacity = tmp_capacity;
+		}
+
 	private:
 
 		/*
