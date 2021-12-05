@@ -55,7 +55,6 @@ namespace ft {
 		: _size(0), _capacity(0), _alloc(alloc)
 		{
 			_vector = _alloc.allocate(_size);
-			std::cout << "made an empty vector" << std::endl;
 		}
 
 		explicit vector
@@ -65,7 +64,6 @@ namespace ft {
 		{
 			_vector = _alloc.allocate(_size);
 			for (size_type i = 0; i < _size; ++i) { _alloc.construct(&_vector[i], val); }
-			std::cout << "made an filled vector" << std::endl;
 		}
 
 		template	<class InputIterator>
@@ -77,7 +75,6 @@ namespace ft {
 		{
 			_vector = _alloc.allocate(_size);
 			for (size_type i = 0; i < _size; ++i, ++first) { _alloc.construct(&_vector[i], *first); }
-			std::cout << "made a range vector" << std::endl;
 		}
 
 		vector
@@ -87,7 +84,6 @@ namespace ft {
 			_vector = _alloc.allocate(_size);
 			const_iterator first = x.begin();
 			for	(size_type i = 0; i < _size; ++i, ++first) { _alloc.construct(&_vector[i], *first); }
-			std::cout << "made a copied vector" << std::endl;
 		}
 
 		vector& operator= (const vector& x)
@@ -98,7 +94,6 @@ namespace ft {
 
 		~vector()
 		{
-			std::cout << "destroying vector" << std::endl;
 			for (size_type i = 0; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
 			_alloc.deallocate(_vector, _capacity);
 		}
