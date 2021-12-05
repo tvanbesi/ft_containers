@@ -24,6 +24,8 @@ namespace ft {
 
 		iterator_vector& operator++() { ++_p; return *this; }
 		iterator_vector& operator--() { --_p; return *this; }
+		iterator_vector operator+(size_t n) { return iterator_vector(_p + n); }
+		iterator_vector operator-(size_t n) { return iterator_vector(_p - n); }
 		difference_type operator-(iterator_vector rhs) const { return _p - rhs._p; }
 		reference operator*(void) const { return *_p; }
 		bool operator==(const iterator_vector& rhs) const { return _p == rhs._p; }
