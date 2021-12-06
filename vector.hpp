@@ -204,32 +204,31 @@ namespace ft {
 		iterator
 			insert(iterator position, const value_type& val)
 		{
-			size_type pos_n;
-			iterator end = this->end();
-			if (position == end) { this->push_back(val); }
+			if (position == this->end()) { this->push_back(val); return --(this->end()); }
 			else
 			{
+				difference_type n_move = this->end() - position;
 				if (_size + 1 > _capacity)
 					reallocate(_size + 1);
-				iterator previous = end - 1;
-				while (end != position)
+				pointer previous = &_vector[_size - 1];
+				pointer end = previous + 1;
+				for (difference_type i = 0; i < n_move; ++i)
 				{
-					_alloc.construct(&(*end), *previous);
-					_alloc.destroy(&(*previous));
+					_alloc.construct(end, *previous);
+					_alloc.destroy(previous);
 					--end;
 					--previous;
 				}
 				*end = val;
 				++_size;
+				return iterator(end);
 			}
-			return position;
 		}
 
 		void
 			insert(iterator position, size_type n, const value_type& val)
 		{
-			iterator end = this->end();
-			if (position == end)
+			if (position == this->end())
 			{
 				if (_size + n > _capacity)
 					reallocate(_size + n);
@@ -237,18 +236,19 @@ namespace ft {
 			}
 			else
 			{
+				difference_type n_move = this->end() - position;
 				if (_size + n > _capacity)
 					reallocate(_size + n);
-				iterator previous = end - 1;
-				end = end + (n - 1);
-				while (previous >= position)
+				pointer previous = &_vector[_size - 1];
+				pointer end = previous + n;
+				for (difference_type i = 0; i < n_move; ++i)
 				{
-					_alloc.construct(&(*end), *previous);
-					_alloc.destroy(&(*previous));
+					_alloc.construct(end, *previous);
+					_alloc.destroy(previous);
 					--end;
 					--previous;
 				}
-				previous = position;
+				++previous;
 				for (size_type i = 0; i < n; ++i, ++previous)
 					*previous = val;
 				_size += n;
