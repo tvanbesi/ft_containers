@@ -228,31 +228,30 @@ namespace ft {
 		void
 			insert(iterator position, size_type n, const value_type& val)
 		{
-			if (position == this->end())
+			iterator end = this->end();
+			if (position == end)
+			{
+				if (_size + n > _capacity)
+					reallocate(_size + n);
 				for (size_type i = 0; i < n; ++i) { this->push_back(val); }
+			}
 			else
 			{
-				pointer tmp = _alloc.allocate(_size + n);
-				iterator current = this->begin();
-				iterator last = this->end();
-				size_type i = 0;
-				while (current != position)
+				if (_size + n > _capacity)
+					reallocate(_size + n);
+				iterator previous = end - 1;
+				end = end + (n - 1);
+				while (previous >= position)
 				{
-					_alloc.construct(&tmp[i], *current);
-					++i;
-					++current;
+					_alloc.construct(&(*end), *previous);
+					_alloc.destroy(&(*previous));
+					--end;
+					--previous;
 				}
-				for (size_type j = 0; j < n; ++i, ++j) { tmp[i] = val; }
-				while (current != last)
-				{
-					_alloc.construct(&tmp[i], *current);
-					++i;
-					++current;
-				}
-				this->~vector();
-				_vector = tmp;
+				previous = position;
+				for (size_type i = 0; i < n; ++i, ++previous)
+					*previous = val;
 				_size += n;
-				_capacity = _size;
 			}
 		}
 
