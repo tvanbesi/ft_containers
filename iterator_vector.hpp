@@ -21,6 +21,8 @@ namespace ft {
 		iterator_vector(pointer p = 0) : _p(p) {}
 		~iterator_vector(void) {}
 
+		operator iterator_vector<const value_type>() { return _p; }
+
 		iterator_vector& operator++() { ++_p; return *this; }
 		iterator_vector& operator--() { --_p; return *this; }
 		iterator_vector operator+(size_t n) const { return iterator_vector(_p + n); }
