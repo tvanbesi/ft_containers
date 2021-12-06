@@ -222,7 +222,7 @@ namespace ft {
 				*end = val;
 				++_size;
 			}
-			return end;
+			return position;
 		}
 
 		void
