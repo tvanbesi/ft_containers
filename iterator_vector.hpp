@@ -29,6 +29,7 @@ namespace ft {
 		reference operator*(void) const { return *_p; }
 		bool operator==(const iterator_vector& rhs) const { return _p == rhs._p; }
 		bool operator!=(const iterator_vector& rhs) const { return _p != rhs._p; }
+		bool operator>=(const iterator_vector& rhs) const { return _p >= rhs._p; }
 
 	private:
 
