@@ -301,22 +301,23 @@ namespace ft {
 		iterator
 			erase(iterator position)
 		{
-			iterator last = this->end();
-			if (position == last - 1) { this->pop_back(); }
+			iterator end = this->end();
+			if (position == end - 1) { this->pop_back(); return this->end(); }
 			else
 			{
 				iterator next = position + 1;
-				while (next != last)
+				size_type n = 0;
+				while (next != end)
 				{
-					_alloc.destroy(&(*position));
-					_alloc.construct(&(*position), *next);
-					++position;
+					_alloc.destroy(&position[n]);
+					_alloc.construct(&position[n], *next);
+					++n;
 					++next;
 				}
-				_alloc.destroy(&(*position));
-				_size--;
+				_alloc.destroy(&position[n]);
+				--_size;
+				return position;
 			}
-			return --position;
 		}
 
 		iterator
