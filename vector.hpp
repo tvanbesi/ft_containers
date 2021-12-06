@@ -273,33 +273,27 @@ namespace ft {
 			}
 			else
 			{
-				pointer tmp = _alloc.allocate(_size + n);
-				iterator current = this->begin();
-				iterator last_this = this->end();
-				size_type i = 0;
-				while (current != position)
+				difference_type n_move = this->end() - position;
+				if (_size + n > _capacity)
+					reallocate(_size + n);
+				pointer previous = &_vector[_size - 1];
+				pointer end = previous + n;
+				for (difference_type i = 0; i < n_move; ++i)
 				{
-					_alloc.construct(&tmp[i], *current);
-					++i;
-					++current;
+					_alloc.construct(end, *previous);
+					_alloc.destroy(previous);
+					--end;
+					--previous;
 				}
+				++previous;
 				while (first != last)
 				{
-					tmp[i] = *first;
-					++i;
+					*previous = *first;
+					++previous;
 					++first;
 				}
-				while (current != last_this)
-				{
-					_alloc.construct(&tmp[i], *current);
-					++i;
-					++current;
-				}
-				this->~vector();
-				_vector = tmp;
-				_capacity = _size + n;
+				_size += n;
 			}
-			_size += n;
 		}
 
 		iterator
