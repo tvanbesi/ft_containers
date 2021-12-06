@@ -23,11 +23,11 @@ namespace ft {
 
 		iterator_vector& operator++() { ++_p; return *this; }
 		iterator_vector& operator--() { --_p; return *this; }
-		iterator_vector operator+(size_t n) { return iterator_vector(_p + n); }
-		iterator_vector operator-(size_t n) { return iterator_vector(_p - n); }
+		iterator_vector operator+(size_t n) const { return iterator_vector(_p + n); }
+		iterator_vector operator-(size_t n) const { return iterator_vector(_p - n); }
 		difference_type operator-(iterator_vector rhs) const { return _p - rhs._p; }
 		reference operator*(void) const { return *_p; }
-		reference operator[](size_t n) { return _p[n]; }
+		reference operator[](size_t n) const { return _p[n]; }
 		bool operator==(const iterator_vector& rhs) const { return _p == rhs._p; }
 		bool operator!=(const iterator_vector& rhs) const { return _p != rhs._p; }
 		bool operator>=(const iterator_vector& rhs) const { return _p >= rhs._p; }
