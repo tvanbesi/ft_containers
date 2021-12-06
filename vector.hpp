@@ -326,12 +326,13 @@ namespace ft {
 			iterator end = this->end();
 			if (last == end)
 			{
-				while (first != end) { _alloc.destroy(&(*first)); ++first; --_size; }
+				_size -= last - first;
+				while (first != last) { _alloc.destroy(&(*first)); ++first; }
 				return this->end();
 			}
 			else
 			{
-				iterator r = last;
+				iterator r = first;
 				_size -= last - first;
 				while (last != end)
 				{
