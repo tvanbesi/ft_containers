@@ -71,10 +71,16 @@ namespace ft {
 			(InputIterator first, InputIterator last,	
 			const allocator_type& alloc = allocator_type(),
 			typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
-		: _size(last - first), _capacity(last - first), _alloc(alloc)
+		: _size(0), _capacity(0), _alloc(alloc)
 		{
-			_vector = _alloc.allocate(_size);
-			for (size_type i = 0; i < _size; ++i, ++first) { _alloc.construct(&_vector[i], *first); }
+			if (first == last)
+				_vector = _alloc.allocate(0);
+			else
+			{
+				_vector = _alloc.allocate(1);
+				++_capacity;
+			}
+			while (first != last) { push_back(*first); ++first; }
 		}
 
 		vector
