@@ -24,14 +24,33 @@ namespace ft {
 		operator iterator_vector<const value_type>() { return _p; }
 
 		iterator_vector& operator++() { ++_p; return *this; }
+		iterator_vector operator++(int)
+		{
+			iterator_vector r = *this;
+			++_p;
+			return r;
+		}
 		iterator_vector& operator--() { --_p; return *this; }
+		iterator_vector operator--(int)
+		{
+			iterator_vector r = *this;
+			--_p;
+			return r;
+		}
 		iterator_vector operator+(size_t n) const { return iterator_vector(_p + n); }
 		iterator_vector operator-(size_t n) const { return iterator_vector(_p - n); }
+		iterator_vector& operator+=(size_t n) { _p += n; return *this; }
+		iterator_vector& operator-=(size_t n) { _p -= n; return *this; }
+		difference_type operator+(iterator_vector rhs) const { return _p + rhs._p; }
 		difference_type operator-(iterator_vector rhs) const { return _p - rhs._p; }
 		reference operator*(void) const { return *_p; }
+		pointer operator->() const { return _p; }
 		reference operator[](size_t n) const { return _p[n]; }
 		bool operator==(const iterator_vector& rhs) const { return _p == rhs._p; }
 		bool operator!=(const iterator_vector& rhs) const { return _p != rhs._p; }
+		bool operator<(const iterator_vector& rhs) const { return _p > rhs._p; }
+		bool operator>(const iterator_vector& rhs) const { return _p < rhs._p; }
+		bool operator<=(const iterator_vector& rhs) const { return _p <= rhs._p; }
 		bool operator>=(const iterator_vector& rhs) const { return _p >= rhs._p; }
 
 	private:
