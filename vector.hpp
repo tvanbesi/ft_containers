@@ -176,12 +176,10 @@ namespace ft {
 			assign(InputIterator first, InputIterator last,
 			typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
 		{
-			for (size_type i = 0; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
-			size_type new_size = last - first;
-			if (new_size > _capacity) { _alloc.deallocate(_vector, _capacity); _vector = _alloc.allocate(new_size); }
-			_size = new_size;
-			for (size_type i = 0; i < _size; ++i, ++first) { _alloc.construct(&_vector[i], *first); }
-			_capacity = _size;
+			for (size_type i = 0; i < _size; ++i)
+				_alloc.destroy(&_vector[i]);
+			_size = 0;
+			while (first != last) { push_back(*first); ++first; }
 		}
 
 		void
