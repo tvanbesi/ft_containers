@@ -377,6 +377,41 @@ namespace ft {
 
 		allocator_type get_allocator() const { return _alloc; }
 
+		/*
+		**	Non-member function overloads
+		*/
+
+		friend bool operator==(const vector& lhs, const vector& rhs)
+		{
+			if (lhs._size != rhs._size)
+				return false;
+			for (size_type i = 0; i < lhs._size; ++i)
+			{
+				if (lhs._vector[i] != rhs._vector[i])
+					return false;
+			}
+			return true;
+		}
+
+		friend bool operator!=(const vector& lhs, const vector& rhs) { return !(lhs == rhs); }
+
+		friend bool operator<(const vector& lhs, const vector& rhs)
+		{
+			size_type limit = lhs._size < rhs._size ? lhs._size : rhs._size;
+			for (size_type i = 0; i < limit; ++i)
+			{
+				if (lhs._vector[i] < rhs._vector[i])
+					return true;
+				if (rhs._vector[i] < lhs._vector[i])
+					return false;
+			}
+			return lhs._size < rhs._size;
+		}
+
+		friend bool operator>(const vector& lhs, const vector& rhs) { return rhs < lhs; }
+		friend bool operator<=(const vector& lhs, const vector& rhs) { return !(rhs < lhs); }
+		friend bool operator>=(const vector& lhs, const vector& rhs) { return !(lhs < rhs); }
+
 	private:
 
 		/*
