@@ -18,6 +18,10 @@ namespace ft {
 		typedef typename	iterator_traits::reference						reference;
 		typedef typename	iterator_traits::iterator_category				iterator_category;
 
+		/*
+		** Member functions
+		*/
+
 		iterator_vector(pointer p = 0) : _p(p) {}
 		~iterator_vector(void) {}
 
@@ -52,6 +56,13 @@ namespace ft {
 		bool operator>(const iterator_vector& rhs) const { return _p < rhs._p; }
 		bool operator<=(const iterator_vector& rhs) const { return _p <= rhs._p; }
 		bool operator>=(const iterator_vector& rhs) const { return _p >= rhs._p; }
+
+		/*
+		** Non-member functions
+		*/
+
+		friend iterator_vector operator+(size_t n, const iterator_vector& rhs) { return iterator_vector(rhs._p + n); }
+		friend iterator_vector operator-(size_t n, const iterator_vector& rhs) { return iterator_vector(rhs._p - n); }
 
 	private:
 
