@@ -4,6 +4,16 @@
 namespace ft {
 
 	/*
+	**	remove_const class template
+	*/
+
+	template<class T>
+	struct remove_const { typedef T value_type; };
+
+	template<class T>
+	struct remove_const<const T> { typedef T value_type; };
+
+	/*
 	**	enable_if class template
 	*/
 

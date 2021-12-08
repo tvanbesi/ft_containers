@@ -2,11 +2,14 @@
 # define ITERATOR_VECTOR_HPP
 
 # include "iterator.hpp"
+# include "type_traits.hpp"
 
 namespace ft {
 
 	template <class T>
 	class iterator_vector : public ft::iterator<std::random_access_iterator_tag, T> {
+	friend class iterator_vector<typename remove_const<T>::value_type>;
+	friend class iterator_vector<const T>;
 
 	public:
 
@@ -25,7 +28,7 @@ namespace ft {
 		iterator_vector(pointer p = 0) : _p(p) {}
 		~iterator_vector(void) {}
 
-		operator iterator_vector<const value_type>() { return _p; }
+		operator iterator_vector<const value_type>() const { return _p; }
 
 		iterator_vector& operator++() { ++_p; return *this; }
 		iterator_vector operator++(int)
@@ -50,12 +53,18 @@ namespace ft {
 		reference operator*(void) const { return *_p; }
 		pointer operator->() const { return _p; }
 		reference operator[](size_t n) const { return _p[n]; }
-		bool operator==(const iterator_vector& rhs) const { return _p == rhs._p; }
-		bool operator!=(const iterator_vector& rhs) const { return _p != rhs._p; }
-		bool operator<(const iterator_vector& rhs) const { return _p > rhs._p; }
-		bool operator>(const iterator_vector& rhs) const { return _p < rhs._p; }
-		bool operator<=(const iterator_vector& rhs) const { return _p <= rhs._p; }
-		bool operator>=(const iterator_vector& rhs) const { return _p >= rhs._p; }
+		template <typename U>
+		bool operator==(const iterator_vector<U>& rhs) const { return _p == rhs._p; }
+		template <typename U>
+		bool operator!=(const iterator_vector<U>& rhs) const { return _p != rhs._p; }
+		template <typename U>
+		bool operator<(const iterator_vector<U>& rhs) const { return _p < rhs._p; }
+		template <typename U>
+		bool operator>(const iterator_vector<U>& rhs) const { return _p > rhs._p; }
+		template <typename U>
+		bool operator<=(const iterator_vector<U>& rhs) const { return _p <= rhs._p; }
+		template <typename U>
+		bool operator>=(const iterator_vector<U>& rhs) const { return _p >= rhs._p; }
 
 		/*
 		** Non-member functions
