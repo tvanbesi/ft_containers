@@ -130,7 +130,7 @@ namespace ft {
 			}
 			else if (n > _size)
 			{
-				if (n > _capacity) { reallocate(n); }
+				if (n > _capacity) { _vector = reallocate(_vector, n, _size, &_capacity); }
 				for (size_type i = _size; i < n; ++i) { _vector[i] = val; }
 			}
 			_size = n;
@@ -143,7 +143,7 @@ namespace ft {
 		void
 			reserve(size_type n)
 		{
-			if (n > _capacity) { reallocate(n); }
+			if (n > _capacity) { _vector = reallocate(_vector, n, _size, &_capacity); }
 		}
 
 		/*
@@ -195,7 +195,7 @@ namespace ft {
 		void
 			push_back(const value_type& val)
 		{
-			if (_size + 1 > _capacity) { reallocate(_size + 1); }
+			if (_size + 1 > _capacity) { _vector = reallocate(_vector, _size + 1, _size, &_capacity); }
 			_vector[_size] = val;
 			_size++;
 		}
@@ -215,7 +215,7 @@ namespace ft {
 			{
 				difference_type n_move = this->end() - position;
 				if (_size + 1 > _capacity)
-					reallocate(_size + 1);
+					_vector = reallocate(_vector, _size + 1, _size, &_capacity);
 				pointer previous = &_vector[_size - 1];
 				pointer end = previous + 1;
 				for (difference_type i = 0; i < n_move; ++i)
@@ -237,14 +237,14 @@ namespace ft {
 			if (position == this->end())
 			{
 				if (_size + n > _capacity)
-					reallocate(_size + n);
+					_vector = reallocate(_vector, _size + n, _size, &_capacity);
 				for (size_type i = 0; i < n; ++i) { this->push_back(val); }
 			}
 			else
 			{
 				difference_type n_move = this->end() - position;
 				if (_size + n > _capacity)
-					reallocate(_size + n);
+					_vector = reallocate(_vector, _size + n, _size, &_capacity);
 				pointer previous = &_vector[_size - 1];
 				pointer end = previous + n;
 				for (difference_type i = 0; i < n_move; ++i)
@@ -435,24 +435,11 @@ namespace ft {
 		**	Private member fonctions
 		*/
 
-		void
-			reallocate(size_type n)
-		{
-			size_type new_capacity = _capacity == 0 ? 1 : _capacity * 2;
-			while (new_capacity < n)
-				new_capacity *= 2;
-			pointer tmp = _alloc.allocate(new_capacity);
-			for (size_type i = 0; i < _size; ++i) { _alloc.construct(&tmp[i], _vector[i]); }
-			this->~vector();
-			_capacity = new_capacity;
-			_vector = tmp;
-		}
-
 		pointer
-			reallocate(pointer p, size_type n, size_type size, size_type* capacity)
+			reallocate(pointer p, size_type target_capacity, size_type size, size_type* capacity)
 		{
 			size_type new_capacity = *capacity == 0 ? 1 : *capacity * 2;
-			while (new_capacity < n)
+			while (new_capacity < target_capacity)
 				new_capacity *= 2;
 			pointer tmp = _alloc.allocate(new_capacity);
 			for(size_type i = 0; i < size; ++i) { _alloc.construct(&tmp[i], p[i]); }
