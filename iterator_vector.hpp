@@ -14,12 +14,12 @@ namespace ft {
 	public:
 
 		typedef				ft::iterator<std::random_access_iterator_tag, T>	iterator;
-		typedef				ft::iterator_traits<iterator>					iterator_traits;
-		typedef typename	iterator_traits::difference_type				difference_type;
-		typedef typename	iterator_traits::value_type						value_type;
-		typedef typename	iterator_traits::pointer						pointer;
-		typedef typename	iterator_traits::reference						reference;
-		typedef typename	iterator_traits::iterator_category				iterator_category;
+		typedef				ft::iterator_traits<iterator>						iterator_traits;
+		typedef typename	iterator_traits::difference_type					difference_type;
+		typedef typename	iterator_traits::value_type							value_type;
+		typedef typename	iterator_traits::pointer							pointer;
+		typedef typename	iterator_traits::reference							reference;
+		typedef typename	iterator_traits::iterator_category					iterator_category;
 
 		/*
 		** Member functions
