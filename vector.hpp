@@ -192,8 +192,8 @@ namespace ft {
 			if (typeid(typename InputIterator::iterator_category) != typeid(std::input_iterator_tag))
 			{
 				typename ft::iterator_traits<InputIterator>::difference_type distance = std::distance(first, last);
-				_alloc.deallocate(&_vector, _capacity);
-				_alloc.allocate(&_vector, distance);
+				_alloc.deallocate(_vector, _capacity);
+				_vector = _alloc.allocate(distance);
 				_capacity = distance;
 			}
 			_size = 0;
