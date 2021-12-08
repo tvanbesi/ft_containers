@@ -50,7 +50,7 @@ namespace ft {
 		iterator_vector& operator-=(size_t n) { _p -= n; return *this; }
 		difference_type operator+(iterator_vector rhs) const { return _p + rhs._p; }
 		difference_type operator-(iterator_vector rhs) const { return _p - rhs._p; }
-		reference operator*(void) const { return *_p; }
+		reference operator*() const { return *_p; }
 		pointer operator->() const { return _p; }
 		reference operator[](size_t n) const { return _p[n]; }
 		template <typename U>
