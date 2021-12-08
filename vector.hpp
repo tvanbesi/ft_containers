@@ -3,6 +3,8 @@
 
 # include <memory>
 # include <stdexcept>
+# include <typeinfo>
+# include <iterator>
 # include "type_traits.hpp"
 # include "iterator.hpp"
 # include "iterator_vector.hpp"
@@ -73,12 +75,21 @@ namespace ft {
 			typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
 		: _size(0), _capacity(0), _alloc(alloc)
 		{
-			if (first == last)
-				_vector = _alloc.allocate(0);
+			if (typeid(typename InputIterator::iterator_category) == typeid(std::input_iterator_tag))
+			{
+				if (first == last)
+					_vector = _alloc.allocate(0);
+				else
+				{
+					_vector = _alloc.allocate(1);
+					++_capacity;
+				}
+			}
 			else
 			{
-				_vector = _alloc.allocate(1);
-				++_capacity;
+				typename ft::iterator_traits<InputIterator>::difference_type distance = std::distance(first, last);
+				_vector = _alloc.allocate(distance);
+				_capacity = distance;
 			}
 			while (first != last) { push_back(*first); ++first; }
 		}
@@ -178,6 +189,13 @@ namespace ft {
 		{
 			for (size_type i = 0; i < _size; ++i)
 				_alloc.destroy(&_vector[i]);
+			if (typeid(typename InputIterator::iterator_category) != typeid(std::input_iterator_tag))
+			{
+				typename ft::iterator_traits<InputIterator>::difference_type distance = std::distance(first, last);
+				_alloc.deallocate(&_vector, _capacity);
+				_alloc.allocate(&_vector, distance);
+				_capacity = distance;
+			}
 			_size = 0;
 			while (first != last) { push_back(*first); ++first; }
 		}
@@ -266,6 +284,16 @@ namespace ft {
 			insert(iterator position, InputIterator first, InputIterator last,
 			typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
 		{
+			if (first == last)
+				return ;
+			size_type new_capacity;
+			if (typeid(typename InputIterator::iterator_category) == typeid(std::input_iterator_tag))
+				new_capacity = _capacity;
+			else
+			{
+				typename ft::iterator_traits<InputIterator>::difference_type distance = std::distance(first, last);
+				new_capacity = _capacity + distance;
+			}
 			if (position == this->end())
 			{
 				while (first != last)
@@ -276,7 +304,6 @@ namespace ft {
 			}
 			else
 			{
-				size_type new_capacity = _capacity;
 				pointer tmp = _alloc.allocate(new_capacity);
 				iterator current = this->begin();
 				iterator end = this->end();
