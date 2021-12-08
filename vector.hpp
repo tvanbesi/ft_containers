@@ -266,11 +266,8 @@ namespace ft {
 			insert(iterator position, InputIterator first, InputIterator last,
 			typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
 		{
-			size_type n = last - first;
 			if (position == this->end())
 			{
-				if (_size + n > _capacity)
-					reallocate(_size + n);
 				while (first != last)
 				{
 					this->push_back(*first);
@@ -279,26 +276,37 @@ namespace ft {
 			}
 			else
 			{
-				difference_type n_move = this->end() - position;
-				if (_size + n > _capacity)
-					reallocate(_size + n);
-				pointer previous = &_vector[_size - 1];
-				pointer end = previous + n;
-				for (difference_type i = 0; i < n_move; ++i)
+				size_type new_capacity = _capacity;
+				pointer tmp = _alloc.allocate(new_capacity);
+				iterator current = this->begin();
+				iterator end = this->end();
+				size_type new_size = 0;
+				while (current != position)
 				{
-					_alloc.construct(end, *previous);
-					_alloc.destroy(previous);
-					--end;
-					--previous;
+					_alloc.construct(&tmp[new_size], *current);
+					++new_size;
+					++current;
 				}
-				++previous;
 				while (first != last)
 				{
-					*previous = *first;
-					++previous;
+					if (new_size + 1 > new_capacity)
+						tmp = reallocate(tmp, new_size + 1, new_size, &_capacity);
+					_alloc.construct(&tmp[new_size], *first);
+					++new_size;
 					++first;
 				}
-				_size += n;
+				while (current != end)
+				{
+					if (new_size + 1 > new_capacity)
+						tmp = reallocate(tmp, new_size + 1, new_size, &_capacity);
+					_alloc.construct(&tmp[new_size], *current);
+					++new_size;
+					++current;
+				}
+				this->~vector();
+				_vector = tmp;
+				_size = new_size;
+				_capacity = new_capacity;
 			}
 		}
 
@@ -438,6 +446,20 @@ namespace ft {
 			this->~vector();
 			_capacity = new_capacity;
 			_vector = tmp;
+		}
+
+		pointer
+			reallocate(pointer p, size_type n, size_type size, size_type* capacity)
+		{
+			size_type new_capacity = *capacity == 0 ? 1 : *capacity * 2;
+			while (new_capacity < n)
+				new_capacity *= 2;
+			pointer tmp = _alloc.allocate(new_capacity);
+			for(size_type i = 0; i < size; ++i) { _alloc.construct(&tmp[i], p[i]); }
+			for(size_type i = 0; i < size; ++i) { _alloc.destroy(&p[i]); }
+			_alloc.deallocate(p, *capacity);
+			*capacity = new_capacity;
+			return tmp;
 		}
 
 	};
