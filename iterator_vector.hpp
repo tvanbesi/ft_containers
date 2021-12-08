@@ -124,6 +124,28 @@ namespace ft {
 		pointer operator->() const { return &(operator*()); }
 		reference operator[](difference_type n) const { return _base[n - 1]; }
 
+		/*
+		**	Non-member functions
+		*/
+
+		template <class Iter>
+		friend bool operator==(const reverse_iterator_vector<Iter>& lhs, const reverse_iterator_vector<Iter>& rhs) { return lhs._base == rhs._base; }
+		template <class Iter>
+		friend bool operator!=(const reverse_iterator_vector<Iter>& lhs, const reverse_iterator_vector<Iter>& rhs) { return lhs._base != rhs._base; }
+		template <class Iter>
+		friend bool operator<(const reverse_iterator_vector<Iter>& lhs, const reverse_iterator_vector<Iter>& rhs) { return lhs._base > rhs._base; }
+		template <class Iter>
+		friend bool operator<=(const reverse_iterator_vector<Iter>& lhs, const reverse_iterator_vector<Iter>& rhs) { return lhs._base >= rhs._base; }
+		template <class Iter>
+		friend bool operator>(const reverse_iterator_vector<Iter>& lhs, const reverse_iterator_vector<Iter>& rhs) { return lhs._base < rhs._base; }
+		template <class Iter>
+		friend bool operator>=(const reverse_iterator_vector<Iter>& lhs, const reverse_iterator_vector<Iter>& rhs) { return lhs._base <= rhs._base; }
+
+		template <class Iter>
+		friend reverse_iterator_vector<Iter> operator+(difference_type n, const reverse_iterator_vector<Iter>& rev_it) { return rev_it + n; }
+		template <class Iter>
+		friend reverse_iterator_vector<Iter> operator-(difference_type n, const reverse_iterator_vector<Iter>& rev_it) { return rev_it - n; }
+
 	private:
 
 		iterator_type	_base;
