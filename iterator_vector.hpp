@@ -96,13 +96,13 @@ namespace ft {
 		*/
 
 		reverse_iterator_vector() : _base(iterator_type()) {}
-		explicit reverse_iterator_vector(iterator_type it) : _base(it - 1) {}
+		explicit reverse_iterator_vector(iterator_type it) : _base(it) {}
 		template <class Iter>
 		reverse_iterator_vector(const reverse_iterator_vector<Iter>& rev_it) : _base(rev_it._base) {}
 
-		iterator_type base() const { return _base + 1; }
+		iterator_type base() const { return _base; }
 
-		reference operator*() const { return *_base; }
+		reference operator*() const { return *(_base - 1); }
 		reverse_iterator_vector operator+(difference_type n) const { return reverse_iterator_vector(_base - n); }
 		reverse_iterator_vector& operator++() { --_base; return *this; }
 		reverse_iterator_vector operator++(int)
