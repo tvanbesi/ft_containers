@@ -158,7 +158,16 @@ namespace ft {
 		void
 			reserve(size_type n)
 		{
-			if (n > _capacity) { _vector = reallocate(_vector, n, _size, &_capacity); }
+			if (n > this->max_size()) { throw::std::length_error("vector::reserve"); }
+			if (n > _capacity)
+			{
+				pointer tmp = _alloc.allocate(n);
+				for (size_type i = 0; i < _size; ++i) { _alloc.construct(&tmp[i], _vector[i]); }
+				for (size_type i = 0; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
+				_alloc.deallocate(_vector, _capacity);
+				_vector = tmp;
+				_capacity = n;
+			}
 		}
 
 		/*
