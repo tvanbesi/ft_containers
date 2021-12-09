@@ -105,6 +105,7 @@ namespace ft {
 
 		vector& operator= (const vector& x)
 		{
+			if (this == &x) { return *this; }
 			this->assign(x.begin(), x.end());
 			return *this;
 		}
