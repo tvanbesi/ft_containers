@@ -146,7 +146,7 @@ namespace ft {
 			else if (n > _size)
 			{
 				if (n > _capacity) { _vector = reallocate(_vector, n, _size, &_capacity); }
-				for (size_type i = _size; i < n; ++i) { _vector[i] = val; }
+				for (size_type i = _size; i < n; ++i) { _alloc.construct(&_vector[i], val); }
 			}
 			_size = n;
 		}
@@ -219,7 +219,7 @@ namespace ft {
 			for (size_type i = 0; i < _size; ++i) { _alloc.destroy(&_vector[i]); }
 			if (n > _capacity) { _alloc.deallocate(_vector, _capacity); _vector = _alloc.allocate(n); }
 			_size = n;
-			for (size_type i = 0; i < _size; ++i) { _vector[i] = val; }
+			for (size_type i = 0; i < _size; ++i) { _alloc.construct(&_vector[i], val); }
 			_capacity = _size;
 		}
 
@@ -227,7 +227,7 @@ namespace ft {
 			push_back(const value_type& val)
 		{
 			if (_size + 1 > _capacity) { _vector = reallocate(_vector, _size + 1, _size, &_capacity); }
-			_vector[_size] = val;
+			_alloc.construct(&_vector[_size], val);
 			_size++;
 		}
 
@@ -256,7 +256,7 @@ namespace ft {
 					--end;
 					--previous;
 				}
-				*end = val;
+				_alloc.construct(end, val);
 				++_size;
 				return iterator(end);
 			}
@@ -287,7 +287,7 @@ namespace ft {
 				}
 				++previous;
 				for (size_type i = 0; i < n; ++i, ++previous)
-					*previous = val;
+					_alloc.construct(previous, val);
 				_size += n;
 			}
 		}
