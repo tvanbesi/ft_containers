@@ -121,7 +121,7 @@ namespace ft {
 		}
 		reverse_iterator_vector& operator-=(difference_type n) { _base += n; return *this; }
 		pointer operator->() const { return &(operator*()); }
-		reference operator[](difference_type n) const { return _base[n - 1]; }
+		reference operator[](difference_type n) const { return _base[-n - 1]; }
 
 		/*
 		**	Non-member functions
