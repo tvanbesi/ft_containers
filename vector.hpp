@@ -75,7 +75,7 @@ namespace ft {
 			typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
 		: _size(0), _capacity(0), _alloc(alloc)
 		{
-			if (typeid(typename InputIterator::iterator_category) == typeid(std::input_iterator_tag))
+			if (typeid(typename ft::iterator_traits<InputIterator>::iterator_category) == typeid(std::input_iterator_tag))
 			{
 				if (first == last)
 					_vector = _alloc.allocate(0);
@@ -193,7 +193,7 @@ namespace ft {
 		{
 			for (size_type i = 0; i < _size; ++i)
 				_alloc.destroy(&_vector[i]);
-			if (typeid(typename InputIterator::iterator_category) != typeid(std::input_iterator_tag))
+			if (typeid(typename ft::iterator_traits<InputIterator>::iterator_category) != typeid(std::input_iterator_tag))
 			{
 				typename ft::iterator_traits<InputIterator>::difference_type distance = std::distance(first, last);
 				_alloc.deallocate(_vector, _capacity);
@@ -291,7 +291,7 @@ namespace ft {
 			if (first == last)
 				return ;
 			size_type new_capacity;
-			if (typeid(typename InputIterator::iterator_category) == typeid(std::input_iterator_tag))
+			if (typeid(typename ft::iterator_traits<InputIterator>::iterator_category) == typeid(std::input_iterator_tag))
 				new_capacity = _capacity;
 			else
 			{
