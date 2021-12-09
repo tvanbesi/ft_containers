@@ -460,6 +460,8 @@ namespace ft {
 		friend bool operator<=(const vector& lhs, const vector& rhs) { return !(rhs < lhs); }
 		friend bool operator>=(const vector& lhs, const vector& rhs) { return !(lhs < rhs); }
 
+		friend void swap(vector& x, vector& y) { x.swap(y); }
+
 	private:
 
 		/*
