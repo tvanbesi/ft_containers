@@ -97,7 +97,7 @@ namespace ft {
 		reverse_iterator_vector() : _base(iterator_type()) {}
 		explicit reverse_iterator_vector(iterator_type it) : _base(it) {}
 		template <class Iter>
-		reverse_iterator_vector(const reverse_iterator_vector<Iter>& rev_it) : _base(rev_it._base) {}
+		reverse_iterator_vector(const reverse_iterator_vector<Iter>& rev_it) : _base(rev_it.base()) {}
 
 		iterator_type base() const { return _base; }
 
