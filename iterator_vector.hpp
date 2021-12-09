@@ -123,6 +123,8 @@ namespace ft {
 		pointer operator->() const { return &(operator*()); }
 		reference operator[](difference_type n) const { return _base[-n - 1]; }
 
+		difference_type operator-(reverse_iterator_vector rhs) const { return rhs.base() - _base; }
+
 		/*
 		**	Non-member functions
 		*/
