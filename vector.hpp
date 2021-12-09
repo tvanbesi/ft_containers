@@ -178,12 +178,12 @@ namespace ft {
 		const_reference operator[] (size_type n) const { return _vector[n]; }
 		reference at(size_type n)
 		{
-			if (n < 0 || n > _size - 1) { throw std::out_of_range(""); }
+			if (n < 0 || n > _size - 1) { throw std::out_of_range("vector::at"); }
 			return _vector[n];
 		}
 		const_reference at(size_type n) const
 		{
-			if (n < 0 || n > _size - 1) { throw std::out_of_range(""); }
+			if (n < 0 || n > _size - 1) { throw std::out_of_range("vector::at"); }
 			return _vector[n];
 		}
 		reference front() { return _vector[0]; }
