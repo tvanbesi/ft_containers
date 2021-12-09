@@ -129,12 +129,18 @@ namespace ft {
 		**	Non-member functions
 		*/
 
-		friend bool operator==(const reverse_iterator_vector& lhs, const reverse_iterator_vector& rhs) { return lhs._base == rhs._base; }
-		friend bool operator!=(const reverse_iterator_vector& lhs, const reverse_iterator_vector& rhs) { return lhs._base != rhs._base; }
-		friend bool operator<(const reverse_iterator_vector& lhs, const reverse_iterator_vector& rhs) { return lhs._base > rhs._base; }
-		friend bool operator<=(const reverse_iterator_vector& lhs, const reverse_iterator_vector& rhs) { return lhs._base >= rhs._base; }
-		friend bool operator>(const reverse_iterator_vector& lhs, const reverse_iterator_vector& rhs) { return lhs._base < rhs._base; }
-		friend bool operator>=(const reverse_iterator_vector& lhs, const reverse_iterator_vector& rhs) { return lhs._base <= rhs._base; }
+		template <class Iter>
+		bool operator==(const reverse_iterator_vector<Iter>& rhs) const { return _base == rhs.base(); }
+		template <class Iter>
+		bool operator!=(const reverse_iterator_vector<Iter>& rhs) const { return _base != rhs.base(); }
+		template <class Iter>
+		bool operator<(const reverse_iterator_vector<Iter>& rhs) const { return _base > rhs.base(); }
+		template <class Iter>
+		bool operator<=(const reverse_iterator_vector<Iter>& rhs) const { return _base >= rhs.base(); }
+		template <class Iter>
+		bool operator>(const reverse_iterator_vector<Iter>& rhs) const { return _base < rhs.base(); }
+		template <class Iter>
+		bool operator>=(const reverse_iterator_vector<Iter>& rhs) const { return _base <= rhs.base(); }
 
 		friend reverse_iterator_vector operator+(difference_type n, const reverse_iterator_vector& rev_it) { return rev_it + n; }
 		friend reverse_iterator_vector operator-(difference_type n, const reverse_iterator_vector& rev_it) { return rev_it - n; }
