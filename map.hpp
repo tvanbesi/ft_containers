@@ -2,6 +2,7 @@
 # define MAP_HPP
 
 # include "pair.hpp"
+# include "node.hpp"
 
 namespace ft {
 
@@ -37,8 +38,18 @@ namespace ft {
 		//const_reverse_iterator
 		//difference_type
 		typedef				size_t								size_type;
+		typedef				Node<key_type, mapped_type>			node;
+
+		/*
+		**	Public member functions
+		*/
+
+		explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+		: _root(0) {}
 
 	private:
+
+		node*	_root;
 
 	};
 
