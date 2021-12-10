@@ -310,6 +310,8 @@ namespace ft {
 			}
 			if (position == this->end())
 			{
+				if (new_capacity != _capacity)
+					_vector = reallocate(_vector, new_capacity, _size, &_capacity);
 				while (first != last)
 				{
 					this->push_back(*first);
