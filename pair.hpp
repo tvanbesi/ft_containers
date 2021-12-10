@@ -35,6 +35,13 @@ namespace ft {
 
 		pair& operator=(const pair& pr) { first = pr.first; second = pr.second; return *this; }
 
+		friend bool operator==(const pair& lhs, const pair& rhs) { return lhs.first == rhs.first && lhs.second == rhs.second; }
+		friend bool operator!=(const pair& lhs, const pair& rhs) { return !(lhs == rhs); }
+		friend bool operator<(const pair& lhs, const pair& rhs) { return lhs.first < rhs.first || (!(rhs.first < lhs.first) && lhs.second < rhs.second); }
+		friend bool operator<=(const pair& lhs, const pair& rhs) { return !(rhs < lhs); }
+		friend bool operator>(const pair& lhs, const pair& rhs) { return rhs < lhs; }
+		friend bool operator>=(const pair& lhs, const pair& rhs) { return !(lhs < rhs); }
+
 	};
 
 }
