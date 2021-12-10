@@ -3,6 +3,7 @@
 
 # include "pair.hpp"
 # include "node.hpp"
+# include "iterator_map.hpp"
 
 namespace ft {
 
@@ -32,7 +33,7 @@ namespace ft {
 		typedef typename	allocator_type::const_reference		const_reference;
 		typedef typename	allocator_type::pointer				pointer;
 		typedef typename	allocator_type::const_pointer		const_pointer;
-		//iterator
+		typedef typename	ft::iterator_map<value_type>		iterator;
 		//const_iterator
 		//reverse_iterator
 		//const_reverse_iterator
