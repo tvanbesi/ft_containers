@@ -4,6 +4,16 @@
 namespace ft {
 
 	/*
+	**	Prototypes
+	*/
+
+	template <class T1, class T2>
+	struct pair;
+
+	template <class T1, class T2>
+	pair<T1, T2> make_pair(T1 x, T2 y);
+
+	/*
 	**	pair class template
 	*/
 
@@ -32,6 +42,8 @@ namespace ft {
 		pair() : first(first_type()), second(second_type()) {}
 		pair(const pair& pr) : first(pr.first), second(pr.second) {}
 		pair(const first_type& a, const second_type& b) : first(a), second(b) {}
+
+		operator const pair<const T1, T2>() const { return (pair<const T1, T2>(first, second)); }
 
 		pair& operator=(const pair& pr) { first = pr.first; second = pr.second; return *this; }
 
