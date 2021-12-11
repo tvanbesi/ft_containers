@@ -67,7 +67,7 @@ namespace ft {
 			_root->right_child = 0;
 			++first;
 			make_bst(first, last);
-			debug_bst_inorder(_root);
+			//debug_bst_inorder(_root);
 		}
 
 		pair<iterator, bool> insert(const value_type& val)
