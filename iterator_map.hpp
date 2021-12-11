@@ -21,17 +21,21 @@ namespace ft {
 		typedef typename	value_type::first_type								key_type;
 		typedef typename	value_type::second_type								mapped_type;
 		typedef				Node<key_type, mapped_type>							node;
+		typedef				node*												node_pointer;
 
 		/*
 		**	Member functions
 		*/
 
-		iterator_map(node* root = 0) : _root(root) {}
+		iterator_map(node_pointer root = 0) : _root(root) {}
 		~iterator_map() {} 
+
+		reference operator*() const { return *_root->content; }
+		pointer operator->() const { return &(*_root->content); }
 
 	private:
 
-		node*	_root;
+		node_pointer	_root;
 
 	};
 

@@ -14,11 +14,12 @@ namespace ft {
 	struct Node
 	{
 		typedef typename	ft::pair<T1, T2>*	pointer;
+		typedef				Node*				node_pointer;
 
-		pointer	content;
-		pointer	left_child;
-		pointer	right_child;
-		int		type;
+		pointer			content;
+		node_pointer	left_child;
+		node_pointer	right_child;
+		int				type;
 	};
 
 }
