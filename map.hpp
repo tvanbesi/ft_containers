@@ -86,6 +86,51 @@ namespace ft {
 		size_type max_size() const { return _alnode.max_size(); }
 
 		/*
+		**	Element access
+		*/
+
+		mapped_type& operator[](const key_type& k)
+		{
+			if (!_root)
+			{
+				_root = create_node(make_pair(k, mapped_type()));
+				++_size;
+				return _root->content->second;
+			}
+			node_pointer current = _root;
+			while (current)
+			{
+				if (_comp(k, current->content->first))
+				{
+					if (!current->left_child)
+					{
+						current->left_child = create_node(make_pair(k, mapped_type()));
+						++_size;
+						mapped_type& r = current->left_child->content->second;
+						_root = balance_bst(_root, _size);
+						return r;
+					}
+					current = current->left_child;
+				}
+				else if (_comp(current->content->first, k))
+				{
+					if (!current->right_child)
+					{
+						current->right_child = create_node(make_pair(k, mapped_type()));
+						++_size;
+						mapped_type& r = current->right_child->content->second;
+						_root = balance_bst(_root, _size);
+						return r;
+					}
+					current = current->right_child;
+				}
+				else
+					break ;
+			}
+			return current->content->second;
+		}
+
+		/*
 		**	Modifiers
 		*/
 
