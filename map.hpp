@@ -70,9 +70,7 @@ namespace ft {
 			++_size;
 			++first;
 			make_bst(first, last);
-			//debug_bst_inorder(_root);
 			_root = balance_bst(_root, _size);
-			std::cout << "_size = " << _size << std::endl;
 		}
 
 		~map()
