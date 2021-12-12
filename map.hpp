@@ -70,6 +70,16 @@ namespace ft {
 			//debug_bst_inorder(_root);
 		}
 
+		~map()
+		{
+			destroy_content_recursive(_root);
+			destroy_node_recursive(_root);
+		}
+
+		/*
+		**	Modifiers
+		*/
+
 		pair<iterator, bool> insert(const value_type& val)
 		{
 			_root = _alnode.allocate(1);
@@ -150,6 +160,26 @@ namespace ft {
 				if (subtree_root->left_child && subtree_root->right_child)
 					break ;
 			}
+		}
+
+		void destroy_content_recursive(node_pointer root)
+		{
+			if (!root)
+				return ;
+			destroy_content_recursive(root->left_child);
+			destroy_content_recursive(root->right_child);
+			_alloc.destroy(root->content);
+			_alloc.deallocate(root->content, 1);
+		}
+
+		void destroy_node_recursive(node_pointer root)
+		{
+			if (!root)
+				return ;
+			destroy_node_recursive(root->left_child);
+			destroy_node_recursive(root->right_child);
+			_alnode.destroy(root);
+			_alnode.deallocate(root, 1);
 		}
 
 	};
