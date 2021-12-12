@@ -5,10 +5,12 @@
 # define	RIGHT	1
 
 # include <functional>
+# include <sys/types.h>
 
 # include "pair.hpp"
 # include "node.hpp"
 # include "iterator_map.hpp"
+# include "vector.hpp"
 
 namespace ft {
 
@@ -53,21 +55,24 @@ namespace ft {
 		*/
 
 		explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp) {}
+		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0) {}
 
 		template <class InputIterator>
 		map	(InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
 			const allocator_type& alloc = allocator_type())
-		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp)
+		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0)
 		{
 			_root = _alnode.allocate(1);
 			_root->content = _alloc.allocate(1);
 			_alloc.construct(_root->content, *first);
 			_root->left_child = 0;
 			_root->right_child = 0;
+			++_size;
 			++first;
 			make_bst(first, last);
 			//debug_bst_inorder(_root);
+			_root = balance_bst(_root, _size);
+			std::cout << "_size = " << _size << std::endl;
 		}
 
 		~map()
@@ -87,6 +92,7 @@ namespace ft {
 			_alloc.construct(_root->content, val);
 			_root->left_child = 0;
 			_root->right_child = 0;
+			++_size;
 			return ft::make_pair(iterator(_root), true);
 		}
 
@@ -106,6 +112,7 @@ namespace ft {
 		allocator_type	_alloc;
 		alnode			_alnode;
 		key_compare		_comp;
+		size_type		_size;
 
 		/*
 		**	Private member functions
@@ -141,6 +148,7 @@ namespace ft {
 				root->left_child = subtree_root;
 			else
 				root->right_child = subtree_root;
+			++_size;
 			if (_comp(max, min))
 			{
 				if (direction == LEFT)
@@ -160,6 +168,35 @@ namespace ft {
 				if (subtree_root->left_child && subtree_root->right_child)
 					break ;
 			}
+		}
+
+		node_pointer balance_bst(node_pointer root, size_type size)
+		{
+			vector<node_pointer> sorted_nodes;
+
+			sorted_nodes.reserve(size);
+			store_bst(root, sorted_nodes);
+			return vector_to_balanced_bst(sorted_nodes, 0, sorted_nodes.size() - 1);
+		}
+
+		void store_bst(node_pointer root, vector<node_pointer>& v)
+		{
+			if (!root)
+				return ;
+			store_bst(root->left_child, v);
+			v.push_back(root);
+			store_bst(root->right_child, v);
+		}
+
+		node_pointer vector_to_balanced_bst(vector<node_pointer>& v, ssize_t start, ssize_t end)
+		{
+			if (start > end)
+				return 0;
+			ssize_t median = (start + end) / 2;
+			node_pointer root = v[median];
+			root->left_child = vector_to_balanced_bst(v, start, median - 1);
+			root->right_child = vector_to_balanced_bst(v, median + 1, end);
+			return root;
 		}
 
 		void destroy_content_recursive(node_pointer root)
