@@ -124,12 +124,12 @@ namespace ft {
 			std::cout << std::boolalpha;
 			while (first != last)
 			{
+				if (_root->left_child && _root->right_child)
+					break ;
 				if (!_root->left_child && _comp((*first).first, _root->content->first))
 					bst(_root, LEFT, _root->content->first, _root->content->first, first, last);
 				if (!_root->right_child && _comp(_root->content->first, (*first).first))
 					bst(_root, RIGHT, _root->content->first, _root->content->first, first, last);
-				if (_root->left_child && _root->right_child)
-					break ;
 				++first;
 			}
 		}
@@ -158,15 +158,15 @@ namespace ft {
 			}
 			while (++first != last)
 			{
-				if	((min == max && !((direction == LEFT && _comp((*first).first, max)) || (direction == RIGHT && _comp(max, (*first).first)))) ||
-					(min != max && !(_comp(min, (*first).first) && _comp((*first).first, max))))
+				if (subtree_root->left_child && subtree_root->right_child)
+					break ;
+				if	((min != max && !(_comp(min, (*first).first) && _comp((*first).first, max))) ||
+					(min == max && !((direction == LEFT && _comp((*first).first, max)) || (direction == RIGHT && _comp(max, (*first).first)))))
 					continue ;
 				if	(!subtree_root->left_child && _comp((*first).first, subtree_root->content->first))
 					bst(subtree_root, LEFT, min, subtree_root->content->first, first, last);
 				if (!subtree_root->right_child && _comp(subtree_root->content->first, (*first).first))
 					bst(subtree_root, RIGHT, subtree_root->content->first, max, first, last);
-				if (subtree_root->left_child && subtree_root->right_child)
-					break ;
 			}
 		}
 
