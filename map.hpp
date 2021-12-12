@@ -64,7 +64,7 @@ namespace ft {
 		{
 			if (first == last)
 				return ;
-			_root = create_node(*first);
+			_root = create_node(*first, 0);
 			++_size;
 			++first;
 			make_bst(first, last);
@@ -93,7 +93,7 @@ namespace ft {
 		{
 			if (!_root)
 			{
-				_root = create_node(make_pair(k, mapped_type()));
+				_root = create_node(make_pair(k, mapped_type()), 0);
 				++_size;
 				return _root->content->second;
 			}
@@ -104,7 +104,7 @@ namespace ft {
 				{
 					if (!current->left_child)
 					{
-						current->left_child = create_node(make_pair(k, mapped_type()));
+						current->left_child = create_node(make_pair(k, mapped_type()), current);
 						++_size;
 						mapped_type& r = current->left_child->content->second;
 						_root = balance_bst(_root, _size);
@@ -116,7 +116,7 @@ namespace ft {
 				{
 					if (!current->right_child)
 					{
-						current->right_child = create_node(make_pair(k, mapped_type()));
+						current->right_child = create_node(make_pair(k, mapped_type()), current);
 						++_size;
 						mapped_type& r = current->right_child->content->second;
 						_root = balance_bst(_root, _size);
@@ -138,7 +138,7 @@ namespace ft {
 		{
 			if (!_root)
 			{
-				_root = create_node(val);
+				_root = create_node(val, 0);
 				++_size;
 				return make_pair(iterator(_root), true);
 			}
@@ -149,7 +149,7 @@ namespace ft {
 				{
 					if (!current->left_child)
 					{
-						current->left_child = create_node(val);
+						current->left_child = create_node(val, current);
 						++_size;
 						pair<iterator, bool> r = make_pair(iterator(current->left_child), true);
 						_root = balance_bst(_root, _size);
@@ -161,7 +161,7 @@ namespace ft {
 				{
 					if (!current->right_child)
 					{
-						current->right_child = create_node(val);
+						current->right_child = create_node(val, current);
 						++_size;
 						pair<iterator, bool> r = make_pair(iterator(current->right_child), true);
 						_root = balance_bst(_root, _size);
@@ -197,13 +197,14 @@ namespace ft {
 		**	Private member functions
 		*/
 
-		node_pointer create_node(const value_type& val)
+		node_pointer create_node(const value_type& val, node_pointer parent)
 		{
 			node_pointer new_node = _alnode.allocate(1);
 			new_node->content = _alloc.allocate(1);
 			_alloc.construct(new_node->content, val);
 			new_node->left_child = 0;
 			new_node->right_child = 0;
+			new_node->parent = parent;
 			return new_node;
 		}
 
@@ -226,7 +227,7 @@ namespace ft {
 		template <class InputIterator>
 		void bst(node_pointer root, int direction, key_type min, key_type max, InputIterator first, InputIterator last)
 		{
-			node_pointer subtree_root = create_node(*first);
+			node_pointer subtree_root = create_node(*first, root);
 			++_size;
 			if (direction == LEFT)
 				root->left_child = subtree_root;

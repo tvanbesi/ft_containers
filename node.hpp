@@ -1,9 +1,6 @@
 #ifndef NODE_HPP
 # define NODE_HPP
 
-# define TERMINAL_NODE		0
-# define NONTERMINAL_NODE	1
-
 namespace ft {
 
 	/*
@@ -19,7 +16,7 @@ namespace ft {
 		pointer			content;
 		node_pointer	left_child;
 		node_pointer	right_child;
-		int				type;
+		node_pointer	parent;
 	};
 
 }
