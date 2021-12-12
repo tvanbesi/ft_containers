@@ -91,13 +91,13 @@ namespace ft {
 
 		pair<iterator, bool> insert(const value_type& val)
 		{
-			node_pointer current = _root;
-			if (!current)
+			if (!_root)
 			{
 				_root = create_node(val);
 				++_size;
 				return make_pair(iterator(_root), true);
 			}
+			node_pointer current = _root;
 			node_pointer previous = current;
 			while (current)
 			{
