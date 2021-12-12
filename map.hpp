@@ -4,6 +4,7 @@
 # define	LEFT	0
 # define	RIGHT	1
 
+# include <algorithm>
 # include <functional>
 # include <sys/types.h>
 
@@ -13,6 +14,9 @@
 # include "vector.hpp"
 
 namespace ft {
+
+	template <class node_pointer>
+	bool comp_nodes(node_pointer i, node_pointer j) { return (i->content->first < j->content->first); }
 
 	/*
 	**	map class template
@@ -64,10 +68,7 @@ namespace ft {
 		{
 			if (first == last)
 				return ;
-			_root = create_node(*first, 0);
-			++_size;
-			++first;
-			make_bst(first, last);
+			_root = make_bst(first, last);
 			_root = balance_bst(_root, _size);
 		}
 
@@ -175,6 +176,24 @@ namespace ft {
 			return make_pair(iterator(current), false);
 		}
 
+		template <class InputIterator>
+		void insert(InputIterator first, InputIterator last)
+		{
+			if (first == last)
+				return ;
+			vector<node_pointer> v;
+			v.reserve(_size + std::distance(first, last));
+			store_bst(_root, v);
+			while (first != last)
+			{
+				v.push_back(create_node(*first, 0));
+				++first;
+			}
+			std::sort(v.begin(), v.end(), comp_nodes<node_pointer>);
+			_root = vector_to_balanced_bst(v, 0, v.size() - 1, 0);
+			debug_bst_inorder(_root);
+		}
+
 		/*
 		**	Observers
 		*/
@@ -209,19 +228,20 @@ namespace ft {
 		}
 
 		template <class InputIterator>
-		void make_bst(InputIterator first, InputIterator last)
+		node_pointer make_bst(InputIterator first, InputIterator last)
 		{
-			std::cout << std::boolalpha;
-			while (first != last)
+			node_pointer root = create_node(*first, 0);
+			++_size;
+			while (++first != last)
 			{
-				if (_root->left_child && _root->right_child)
+				if (root->left_child && root->right_child)
 					break ;
-				if (!_root->left_child && _comp((*first).first, _root->content->first))
-					bst(_root, LEFT, _root->content->first, _root->content->first, first, last);
-				if (!_root->right_child && _comp(_root->content->first, (*first).first))
-					bst(_root, RIGHT, _root->content->first, _root->content->first, first, last);
-				++first;
+				if (!root->left_child && _comp((*first).first, root->content->first))
+					bst(root, LEFT, root->content->first, root->content->first, first, last);
+				if (!root->right_child && _comp(root->content->first, (*first).first))
+					bst(root, RIGHT, root->content->first, root->content->first, first, last);
 			}
+			return root;
 		}
 
 		template <class InputIterator>
@@ -260,7 +280,7 @@ namespace ft {
 
 			sorted_nodes.reserve(size);
 			store_bst(root, sorted_nodes);
-			return vector_to_balanced_bst(sorted_nodes, 0, sorted_nodes.size() - 1);
+			return vector_to_balanced_bst(sorted_nodes, 0, sorted_nodes.size() - 1, 0);
 		}
 
 		void store_bst(node_pointer root, vector<node_pointer>& v)
@@ -272,14 +292,15 @@ namespace ft {
 			store_bst(root->right_child, v);
 		}
 
-		node_pointer vector_to_balanced_bst(vector<node_pointer>& v, ssize_t start, ssize_t end)
+		node_pointer vector_to_balanced_bst(vector<node_pointer>& v, ssize_t start, ssize_t end, node_pointer parent)
 		{
 			if (start > end)
 				return 0;
 			ssize_t median = (start + end) / 2;
 			node_pointer root = v[median];
-			root->left_child = vector_to_balanced_bst(v, start, median - 1);
-			root->right_child = vector_to_balanced_bst(v, median + 1, end);
+			root->parent = parent;
+			root->left_child = vector_to_balanced_bst(v, start, median - 1, root);
+			root->right_child = vector_to_balanced_bst(v, median + 1, end, root);
 			return root;
 		}
 
