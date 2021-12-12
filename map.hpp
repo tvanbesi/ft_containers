@@ -62,11 +62,9 @@ namespace ft {
 			const allocator_type& alloc = allocator_type())
 		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0)
 		{
-			_root = _alnode.allocate(1);
-			_root->content = _alloc.allocate(1);
-			_alloc.construct(_root->content, *first);
-			_root->left_child = 0;
-			_root->right_child = 0;
+			if (first == last)
+				return ;
+			_root = create_node(*first);
 			++_size;
 			++first;
 			make_bst(first, last);
@@ -93,13 +91,38 @@ namespace ft {
 
 		pair<iterator, bool> insert(const value_type& val)
 		{
-			_root = _alnode.allocate(1);
-			_root->content = _alloc.allocate(1);
-			_alloc.construct(_root->content, val);
-			_root->left_child = 0;
-			_root->right_child = 0;
-			++_size;
-			return ft::make_pair(iterator(_root), true);
+			node_pointer current = _root;
+			node_pointer previous = current;
+			while (current)
+			{
+				if (_comp(val.first, current->content->first))
+				{
+					previous = current;
+					current = current->left_child;
+					if (!current)
+					{
+						previous->left_child = create_node(val);
+						++_size;
+						_root = balance_bst(_root, _size);
+						return make_pair(iterator(previous->left_child), true);
+					}
+				}
+				else if (_comp(current->content->first, val.first))
+				{
+					previous = current;
+					current = current->right_child;
+					if (!current)
+					{
+						previous->right_child = create_node(val);
+						++_size;
+						_root = balance_bst(_root, _size);
+						return make_pair(iterator(previous->right_child), true);
+					}
+				}
+				else
+					break ;
+			}
+			return make_pair(iterator(current), false);
 		}
 
 		/*
@@ -124,6 +147,16 @@ namespace ft {
 		**	Private member functions
 		*/
 
+		node_pointer create_node(const value_type& val)
+		{
+			node_pointer new_node = _alnode.allocate(1);
+			new_node->content = _alloc.allocate(1);
+			_alloc.construct(new_node->content, val);
+			new_node->left_child = 0;
+			new_node->right_child = 0;
+			return new_node;
+		}
+
 		template <class InputIterator>
 		void make_bst(InputIterator first, InputIterator last)
 		{
@@ -143,18 +176,12 @@ namespace ft {
 		template <class InputIterator>
 		void bst(node_pointer root, int direction, key_type min, key_type max, InputIterator first, InputIterator last)
 		{
-			node_pointer subtree_root;
-
-			subtree_root = _alnode.allocate(1);
-			subtree_root->content = _alloc.allocate(1);
-			_alloc.construct(subtree_root->content, *first);
-			subtree_root->left_child = 0;
-			subtree_root->right_child = 0;
+			node_pointer subtree_root = create_node(*first);
+			++_size;
 			if (direction == LEFT)
 				root->left_child = subtree_root;
 			else
 				root->right_child = subtree_root;
-			++_size;
 			if (_comp(max, min))
 			{
 				if (direction == LEFT)
