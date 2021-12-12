@@ -92,6 +92,12 @@ namespace ft {
 		pair<iterator, bool> insert(const value_type& val)
 		{
 			node_pointer current = _root;
+			if (!current)
+			{
+				_root = create_node(val);
+				++_size;
+				return make_pair(iterator(_root), true);
+			}
 			node_pointer previous = current;
 			while (current)
 			{
