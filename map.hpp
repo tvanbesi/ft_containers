@@ -143,32 +143,31 @@ namespace ft {
 				return make_pair(iterator(_root), true);
 			}
 			node_pointer current = _root;
-			node_pointer previous = current;
 			while (current)
 			{
 				if (_comp(val.first, current->content->first))
 				{
-					previous = current;
-					current = current->left_child;
-					if (!current)
+					if (!current->left_child)
 					{
-						previous->left_child = create_node(val);
+						current->left_child = create_node(val);
 						++_size;
+						pair<iterator, bool> r = make_pair(iterator(current->left_child), true);
 						_root = balance_bst(_root, _size);
-						return make_pair(iterator(previous->left_child), true);
+						return r;
 					}
+					current = current->left_child;
 				}
 				else if (_comp(current->content->first, val.first))
 				{
-					previous = current;
-					current = current->right_child;
-					if (!current)
+					if (!current->right_child)
 					{
-						previous->right_child = create_node(val);
+						current->right_child = create_node(val);
 						++_size;
+						pair<iterator, bool> r = make_pair(iterator(current->right_child), true);
 						_root = balance_bst(_root, _size);
-						return make_pair(iterator(previous->right_child), true);
+						return r;
 					}
+					current = current->right_child;
 				}
 				else
 					break ;
