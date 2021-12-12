@@ -194,6 +194,70 @@ namespace ft {
 			debug_bst_inorder(_root);
 		}
 
+		size_type erase(const key_type& k)
+		{
+			if (!_root)
+				return 0;
+			node_pointer current = _root;
+			while (current)
+			{
+				if (_comp(k, current->content->first))
+				{
+					if (!current->left_child)
+						return 0;
+					current = current->left_child;
+				}
+				else if (_comp(current->content->first, k))
+				{
+					if (!current->right_child)
+						return 0;
+					current = current->right_child;
+				}
+				else
+					break ;
+			}
+			if (!current)
+				return 0;
+			_alloc.destroy(current->content);
+			_alloc.deallocate(current->content, 1);
+			node_pointer child;
+			if (isleaf(current))
+			{
+				if (current != _root)
+				{
+					if (current->parent->right_child == current)
+						current->parent->right_child = 0;
+					else
+						current->parent->left_child = 0;
+				}
+				_alnode.destroy(current);
+				_alnode.deallocate(current, 1);
+			}
+			else if ((child = has_one_child_leaf(current)))
+			{
+				current->content = child->content;
+				if (current->right_child == child)
+					current->right_child = 0;
+				else
+					current->left_child = 0;
+				_alnode.destroy(child);
+				_alnode.deallocate(child, 1);
+			}
+			else
+			{
+				child = inorder_xcessor(current);
+				current->content = child->content;
+				if (child->parent->right_child == child)
+					child->parent->right_child = 0;
+				else
+					child->parent->left_child = 0;
+				_alnode.destroy(child);
+				_alnode.deallocate(child, 1);
+			}
+			--_size;
+			return 1;
+		}
+
 		/*
 		**	Observers
 		*/
@@ -322,6 +386,39 @@ namespace ft {
 			destroy_node_recursive(root->right_child);
 			_alnode.destroy(root);
 			_alnode.deallocate(root, 1);
+		}
+
+		bool isleaf(node_pointer n) { return (!n->right_child && !n->left_child); }
+
+		node_pointer has_one_child_leaf(node_pointer n)
+		{
+			if (!n->right_child && n->left_child && !n->left_child->right_child && !n->left_child->left_child)
+				return n->left_child;
+			else if (n->right_child && !n->left_child && !n->right_child->right_child && !n->right_child->left_child)
+				return n->right_child;
+			return 0;
+		}
+
+		/*
+		**	returns inorder successor if there is a right_child or the inorder predecessor if there isn't
+		*/
+
+		node_pointer inorder_xcessor(node_pointer n)
+		{
+			if (n->right_child)
+			{
+				n = n->right_child;
+				while (n->left_child)
+					n = n->left_child;
+				return n;
+			}
+			else
+			{
+				n = n->left_child;
+				while (n->right_child)
+					n = n->right_child;
+				return n;
+			}
 		}
 
 	};
