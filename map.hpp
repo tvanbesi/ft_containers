@@ -80,6 +80,14 @@ namespace ft {
 		}
 
 		/*
+		**	Capacity
+		*/
+
+		bool empty() const { return _size == 0; }
+		size_type size() const { return _size; }
+		size_type max_size() const { return _alnode.max_size(); }
+
+		/*
 		**	Modifiers
 		*/
 
