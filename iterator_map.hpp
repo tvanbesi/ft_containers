@@ -3,6 +3,8 @@
 
 # include "iterator.hpp"
 # include "node.hpp"
+# include "map.hpp"
+# include "utils.hpp"
 
 namespace ft {
 
@@ -30,8 +32,48 @@ namespace ft {
 		iterator_map(node_pointer root = 0) : _root(root) {}
 		~iterator_map() {} 
 
+		iterator_map& operator++()
+		{
+			if (_root->issentinel())
+			{
+				if (_root->parent && _root->child_side() == LEFT)
+					_root = _root->parent;
+			}
+			else if (_root->child_side() != RIGHT)
+			{
+				if (_root->right_child)
+				{
+					_root = _root->right_child;
+					while (_root->left_child)
+						_root = _root->left_child;
+				}
+				else if (_root->parent)
+					_root = _root->parent;
+			}
+			else
+			{
+				if (_root->right_child)
+				{
+					_root = _root->right_child;
+					while (_root->left_child)
+						_root = _root->left_child;
+				}
+				else
+				{
+					_root = _root->parent;
+					while (_root->child_side() != LEFT)
+						_root = _root->parent;
+					_root = _root->parent;
+				}
+			}
+			return *this;
+		}
 		reference operator*() const { return *_root->content; }
 		pointer operator->() const { return &(*_root->content); }
+		template <typename U>
+		bool operator==(const iterator_map<U>& rhs) const { return _root == rhs._root; }
+		template <typename U>
+		bool operator!=(const iterator_map<U>& rhs) const { return _root != rhs._root; }
 
 	private:
 

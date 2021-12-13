@@ -1,9 +1,6 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 
-# define	LEFT	0
-# define	RIGHT	1
-
 # include <algorithm>
 # include <functional>
 # include <sys/types.h>
@@ -12,6 +9,7 @@
 # include "node.hpp"
 # include "iterator_map.hpp"
 # include "vector.hpp"
+# include "utils.hpp"
 
 namespace ft {
 
@@ -59,23 +57,51 @@ namespace ft {
 		*/
 
 		explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0) {}
+		: _root(create_node_sentinel(0)), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0) {}
 
 		template <class InputIterator>
 		map	(InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
 			const allocator_type& alloc = allocator_type())
-		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0)
+		: _alloc(alloc), _alnode(alloc), _comp(comp), _size(0)
 		{
 			if (first == last)
+			{
+				_root = create_node_sentinel(0);
 				return ;
+			}
 			_root = make_bst(first, last);
 			_root = balance_bst(_root, _size);
+			place_sentinels();
 		}
 
 		~map()
 		{
 			destroy_content_recursive(_root);
 			destroy_node_recursive(_root);
+		}
+
+		/*
+		**	Iterator
+		*/
+
+		iterator begin()
+		{
+			if (_size == 0)
+				return iterator(_root);
+			node_pointer r = _root;
+			while (r->left_child)
+				r = r->left_child;
+			return iterator(r->parent);
+		}
+
+		iterator end()
+		{
+			if (_size == 0)
+				return iterator(_root);
+			node_pointer r = _root;
+			while (r->right_child)
+				r = r->right_child;
+			return iterator(r);
 		}
 
 		/*
@@ -92,10 +118,12 @@ namespace ft {
 
 		mapped_type& operator[](const key_type& k)
 		{
+			clear_sentinels();
 			if (!_root)
 			{
 				_root = create_node(make_pair(k, mapped_type()), 0);
 				++_size;
+				place_sentinels();
 				return _root->content->second;
 			}
 			node_pointer current = _root;
@@ -109,6 +137,7 @@ namespace ft {
 						++_size;
 						mapped_type& r = current->left_child->content->second;
 						_root = balance_bst(_root, _size);
+						place_sentinels();
 						return r;
 					}
 					current = current->left_child;
@@ -121,6 +150,7 @@ namespace ft {
 						++_size;
 						mapped_type& r = current->right_child->content->second;
 						_root = balance_bst(_root, _size);
+						place_sentinels();
 						return r;
 					}
 					current = current->right_child;
@@ -137,10 +167,12 @@ namespace ft {
 
 		pair<iterator, bool> insert(const value_type& val)
 		{
+			clear_sentinels();
 			if (!_root)
 			{
 				_root = create_node(val, 0);
 				++_size;
+				place_sentinels();
 				return make_pair(iterator(_root), true);
 			}
 			node_pointer current = _root;
@@ -154,6 +186,7 @@ namespace ft {
 						++_size;
 						pair<iterator, bool> r = make_pair(iterator(current->left_child), true);
 						_root = balance_bst(_root, _size);
+						place_sentinels();
 						return r;
 					}
 					current = current->left_child;
@@ -166,6 +199,7 @@ namespace ft {
 						++_size;
 						pair<iterator, bool> r = make_pair(iterator(current->right_child), true);
 						_root = balance_bst(_root, _size);
+						place_sentinels();
 						return r;
 					}
 					current = current->right_child;
@@ -181,6 +215,7 @@ namespace ft {
 		{
 			if (first == last)
 				return ;
+			clear_sentinels();
 			vector<node_pointer> v;
 			v.reserve(_size + std::distance(first, last));
 			store_bst(_root, v);
@@ -191,41 +226,51 @@ namespace ft {
 			}
 			std::sort(v.begin(), v.end(), comp_nodes<node_pointer>);
 			_root = vector_to_balanced_bst(v, 0, v.size() - 1, 0);
-			debug_bst_inorder(_root);
+			place_sentinels();
 		}
 
 		size_type erase(const key_type& k)
 		{
-			if (!_root)
+			if (!_root || _root->issentinel())
 				return 0;
+			clear_sentinels();
 			node_pointer current = _root;
 			while (current)
 			{
 				if (_comp(k, current->content->first))
 				{
 					if (!current->left_child)
+					{
+						place_sentinels();
 						return 0;
+					}
 					current = current->left_child;
 				}
 				else if (_comp(current->content->first, k))
 				{
 					if (!current->right_child)
+					{
+						place_sentinels();
 						return 0;
+					}
 					current = current->right_child;
 				}
 				else
 					break ;
 			}
 			if (!current)
+			{
+				place_sentinels();
 				return 0;
+			}
 			_alloc.destroy(current->content);
 			_alloc.deallocate(current->content, 1);
 			node_pointer child;
-			if (isleaf(current))
+			if (current->isleaf())
 			{
 				if (current != _root)
 				{
-					if (current->parent->right_child == current)
+					if (current->child_side() == RIGHT)
 						current->parent->right_child = 0;
 					else
 						current->parent->left_child = 0;
@@ -233,7 +278,7 @@ namespace ft {
 				_alnode.destroy(current);
 				_alnode.deallocate(current, 1);
 			}
-			else if ((child = has_one_child_leaf(current)))
+			else if ((child = current->has_one_child_leaf()))
 			{
 				current->content = child->content;
 				if (current->right_child == child)
@@ -245,9 +290,9 @@ namespace ft {
 			}
 			else
 			{
-				child = inorder_xcessor(current);
+				child = current->inorder_xcessor();
 				current->content = child->content;
-				if (child->parent->right_child == child)
+				if (child->child_side() == RIGHT)
 					child->parent->right_child = 0;
 				else
 					child->parent->left_child = 0;
@@ -255,6 +300,7 @@ namespace ft {
 				_alnode.deallocate(child, 1);
 			}
 			--_size;
+			place_sentinels();
 			return 1;
 		}
 
@@ -285,6 +331,16 @@ namespace ft {
 			node_pointer new_node = _alnode.allocate(1);
 			new_node->content = _alloc.allocate(1);
 			_alloc.construct(new_node->content, val);
+			new_node->left_child = 0;
+			new_node->right_child = 0;
+			new_node->parent = parent;
+			return new_node;
+		}
+
+		node_pointer create_node_sentinel(node_pointer parent)
+		{
+			node_pointer new_node = _alnode.allocate(1);
+			new_node->content = 0;
 			new_node->left_child = 0;
 			new_node->right_child = 0;
 			new_node->parent = parent;
@@ -374,8 +430,11 @@ namespace ft {
 				return ;
 			destroy_content_recursive(root->left_child);
 			destroy_content_recursive(root->right_child);
-			_alloc.destroy(root->content);
-			_alloc.deallocate(root->content, 1);
+			if (!root->issentinel())
+			{
+				_alloc.destroy(root->content);
+				_alloc.deallocate(root->content, 1);
+			}
 		}
 
 		void destroy_node_recursive(node_pointer root)
@@ -388,37 +447,44 @@ namespace ft {
 			_alnode.deallocate(root, 1);
 		}
 
-		bool isleaf(node_pointer n) { return (!n->right_child && !n->left_child); }
-
-		node_pointer has_one_child_leaf(node_pointer n)
+		void place_sentinels()
 		{
-			if (!n->right_child && n->left_child && !n->left_child->right_child && !n->left_child->left_child)
-				return n->left_child;
-			else if (n->right_child && !n->left_child && !n->right_child->right_child && !n->right_child->left_child)
-				return n->right_child;
-			return 0;
+			if (!_root)
+			{
+				_root = create_node_sentinel(0);
+				return ;
+			}
+			node_pointer current = _root;
+			while (current->left_child)
+				current = current->left_child;
+			current->left_child = create_node_sentinel(current);
+			current = _root;
+			while (current->right_child)
+				current = current->right_child;
+			current->right_child = create_node_sentinel(current);
 		}
 
-		/*
-		**	returns inorder successor if there is a right_child or the inorder predecessor if there isn't
-		*/
-
-		node_pointer inorder_xcessor(node_pointer n)
+		void clear_sentinels()
 		{
-			if (n->right_child)
+			if (_root->issentinel())
 			{
-				n = n->right_child;
-				while (n->left_child)
-					n = n->left_child;
-				return n;
+				_alnode.destroy(_root);
+				_alnode.deallocate(_root, 1);
+				_root = 0;
+				return ;
 			}
-			else
-			{
-				n = n->left_child;
-				while (n->right_child)
-					n = n->right_child;
-				return n;
-			}
+			node_pointer current = _root;
+			while (current->left_child)
+				current = current->left_child;
+			current->parent->left_child = 0;
+			_alnode.destroy(current);
+			_alnode.deallocate(current, 1);
+			current = _root;
+			while (current->right_child)
+				current = current->right_child;
+			current->parent->right_child = 0;
+			_alnode.destroy(current);
+			_alnode.deallocate(current, 1);
 		}
 
 	};
