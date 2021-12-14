@@ -68,6 +68,44 @@ namespace ft {
 			}
 			return *this;
 		}
+
+		iterator_map& operator--()
+		{
+			if (_root->issentinel())
+			{
+				if (_root->parent && _root->child_side() == RIGHT)
+					_root = _root->parent;
+			}
+			else if (_root->child_side() != LEFT)
+			{
+				if (_root->left_child)
+				{
+					_root = _root->left_child;
+					while (_root->right_child)
+						_root = _root->right_child;
+				}
+				else if (_root->parent)
+					_root = _root->parent;
+			}
+			else
+			{
+				if (_root->left_child)
+				{
+					_root = _root->left_child;
+					while (_root->right_child)
+						_root = _root->right_child;
+				}
+				else
+				{
+					_root = _root->parent;
+					while (_root->child_side() != RIGHT)
+						_root = _root->parent;
+					_root = _root->parent;
+				}
+			}
+			return *this;
+		}
+
 		reference operator*() const { return *_root->content; }
 		pointer operator->() const { return &(*_root->content); }
 		template <typename U>
