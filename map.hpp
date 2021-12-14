@@ -43,7 +43,7 @@ namespace ft {
 		typedef typename	allocator_type::pointer							pointer;
 		typedef typename	allocator_type::const_pointer					const_pointer;
 		typedef typename	ft::iterator_map<value_type>					iterator;
-		//const_iterator
+		typedef typename	ft::iterator_map<const value_type>				const_iterator;
 		//reverse_iterator
 		//const_reverse_iterator
 		//difference_type
@@ -74,6 +74,9 @@ namespace ft {
 			place_sentinels();
 		}
 
+		map (const map& x)
+		: _root(create_node_sentinel(0)), _alloc(x._alloc), _alnode(x._alloc), _comp(x._comp), _size(0) { this->insert(x.begin(), x.end()); }
+
 		~map()
 		{
 			destroy_content_recursive(_root);
@@ -94,6 +97,16 @@ namespace ft {
 			return iterator(r->parent);
 		}
 
+		const_iterator begin() const
+		{
+			if (_size == 0)
+				return const_iterator(_root);
+			node_pointer r = _root;
+			while (r->left_child)
+				r = r->left_child;
+			return const_iterator(r->parent);
+		}
+
 		iterator end()
 		{
 			if (_size == 0)
@@ -102,6 +115,16 @@ namespace ft {
 			while (r->right_child)
 				r = r->right_child;
 			return iterator(r);
+		}
+
+		const_iterator end() const
+		{
+			if (_size == 0)
+				return const_iterator(_root);
+			node_pointer r = _root;
+			while (r->right_child)
+				r = r->right_child;
+			return const_iterator(r);
 		}
 
 		/*
@@ -226,6 +249,7 @@ namespace ft {
 			}
 			std::sort(v.begin(), v.end(), comp_nodes<node_pointer>);
 			_root = vector_to_balanced_bst(v, 0, v.size() - 1, 0);
+			_size = v.size();
 			place_sentinels();
 		}
 
