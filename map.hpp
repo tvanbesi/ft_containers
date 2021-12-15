@@ -206,14 +206,20 @@ namespace ft {
 
 		iterator insert(iterator position, const value_type& val)
 		{
-			//if position points to a sentinel everything breaks down
-			clear_sentinels();
-			if (!_root)
+			if (this->empty())
 			{
+				clear_sentinels();
 				_root = create_node(val, 0);
 				++_size;
 				place_sentinels();
 				return iterator(_root);
+			}
+			else if (position.issentinel())
+			{
+				if (position.child_side() == LEFT)
+					++position;
+				else
+					--position;
 			}
 			iterator previous_position;
 			if (_comp((*position).first, val.first))
@@ -221,10 +227,16 @@ namespace ft {
 				do
 				{
 					previous_position = position++;
+					if (position.issentinel())
+					{
+						position = previous_position;
+						break ;
+					}
 					if ((*position).first == val.first)
 						return position;
 				}
 				while (!(_comp((*previous_position).first, val.first) && _comp(val.first, (*position).first)));
+				clear_sentinels();
 				pair<node_pointer, bool> r = insert_node(position.get_root(), val);
 				return iterator(r.first);
 			}
@@ -233,10 +245,13 @@ namespace ft {
 				do
 				{
 					previous_position = position--;
+					if (position.issentinel())
+						break ;
 					if ((*position).first == val.first)
 						return position;
 				}
 				while (!(_comp((*position).first, val.first) && _comp(val.first, (*previous_position).first)));
+				clear_sentinels();
 				pair<node_pointer, bool> r = insert_node(previous_position.get_root(), val);
 				return iterator(r.first);
 			}

@@ -130,6 +130,8 @@ namespace ft {
 		bool operator!=(const iterator_map<U>& rhs) const { return _root != rhs._root; }
 
 		node_pointer get_root() const { return _root; }
+		bool issentinel() const { return !_root->content; }
+		int child_side() const { return _root->child_side(); }
 
 	private:
 
