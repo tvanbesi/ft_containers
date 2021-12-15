@@ -69,6 +69,13 @@ namespace ft {
 			return *this;
 		}
 
+		iterator_map operator++(int)
+		{
+			iterator_map r = *this;
+			++this;
+			return r;
+		}
+
 		iterator_map& operator--()
 		{
 			if (_root->issentinel())
@@ -104,6 +111,13 @@ namespace ft {
 				}
 			}
 			return *this;
+		}
+
+		iterator_map operator--(int)
+		{
+			iterator_map r = *this;
+			--this;
+			return r;
 		}
 
 		reference operator*() const { return *_root->content; }
