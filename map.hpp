@@ -198,39 +198,51 @@ namespace ft {
 				place_sentinels();
 				return make_pair(iterator(_root), true);
 			}
-			node_pointer current = _root;
-			while (current)
+			pair<node_pointer, bool> r = insert_node(_root, val);
+			if (r.second)
+				return (make_pair(iterator(r.first), true));
+			return (make_pair(iterator(r.first), false));
+		}
+
+		iterator insert(iterator position, const value_type& val)
+		{
+			//if position points to a sentinel everything breaks down
+			clear_sentinels();
+			if (!_root)
 			{
-				if (_comp(val.first, current->content->first))
-				{
-					if (!current->left_child)
-					{
-						current->left_child = create_node(val, current);
-						++_size;
-						pair<iterator, bool> r = make_pair(iterator(current->left_child), true);
-						_root = balance_bst(_root, _size);
-						place_sentinels();
-						return r;
-					}
-					current = current->left_child;
-				}
-				else if (_comp(current->content->first, val.first))
-				{
-					if (!current->right_child)
-					{
-						current->right_child = create_node(val, current);
-						++_size;
-						pair<iterator, bool> r = make_pair(iterator(current->right_child), true);
-						_root = balance_bst(_root, _size);
-						place_sentinels();
-						return r;
-					}
-					current = current->right_child;
-				}
-				else
-					break ;
+				_root = create_node(val, 0);
+				++_size;
+				place_sentinels();
+				return iterator(_root);
 			}
-			return make_pair(iterator(current), false);
+			iterator previous_position;
+			node_pointer current;
+			if (_comp((*position).first, val.first))
+			{
+				do
+				{
+					previous_position = position++;
+					if ((*position).first == val.first)
+						return position;
+				}
+				while (!(_comp((*previous_position).first, val.first) && _comp(val.first, (*position).first)));
+				pair<node_pointer, bool> r = insert_node(position.get_root(), val);
+				return iterator(r.first);
+			}
+			else if (_comp(val.first, (*position).first))
+			{
+				do
+				{
+					previous_position = position--;
+					if ((*position).first == val.first)
+						return position;
+				}
+				while (!(_comp((*position).first, val.first) && _comp(val.first, (*previous_position).first)));
+				pair<node_pointer, bool> r = insert_node(previous_position.get_root(), val);
+				return iterator(r.first);
+			}
+			else
+				return position;
 		}
 
 		template <class InputIterator>
@@ -369,6 +381,42 @@ namespace ft {
 			new_node->right_child = 0;
 			new_node->parent = parent;
 			return new_node;
+		}
+
+		pair<node_pointer, bool> insert_node(node_pointer root, const value_type& val)
+		{
+			while (root)
+			{
+				if (_comp(val.first, root->content->first))
+				{
+					if (!root->left_child)
+					{
+						root->left_child = create_node(val, root);
+						node_pointer r = root->left_child;
+						++_size;
+						_root = balance_bst(_root, _size);
+						place_sentinels();
+						return make_pair(r, true);
+					}
+					root = root->left_child;
+				}
+				else if (_comp(root->content->first, val.first))
+				{
+					if (!root->right_child)
+					{
+						root->right_child = create_node(val, root);
+						node_pointer r = root->right_child;
+						++_size;
+						_root = balance_bst(_root, _size);
+						place_sentinels();
+						return make_pair(r, true);
+					}
+					root = root->right_child;
+				}
+				else
+					break ;
+			}
+			return make_pair(root, false);
 		}
 
 		template <class InputIterator>
