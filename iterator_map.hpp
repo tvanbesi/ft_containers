@@ -30,6 +30,8 @@ namespace ft {
 		*/
 
 		iterator_map(node_pointer root = 0) : _root(root) {}
+		iterator_map(const iterator_map& src) : _root(src._root) {}
+		iterator_map& operator=(const iterator_map& src) { _root = src._root; return *this; }
 		~iterator_map() {} 
 
 		iterator_map& operator++()
@@ -72,7 +74,7 @@ namespace ft {
 		iterator_map operator++(int)
 		{
 			iterator_map r = *this;
-			++this;
+			++(*this);
 			return r;
 		}
 
@@ -116,7 +118,7 @@ namespace ft {
 		iterator_map operator--(int)
 		{
 			iterator_map r = *this;
-			--this;
+			--(*this);
 			return r;
 		}
 
@@ -126,6 +128,8 @@ namespace ft {
 		bool operator==(const iterator_map<U>& rhs) const { return _root == rhs._root; }
 		template <typename U>
 		bool operator!=(const iterator_map<U>& rhs) const { return _root != rhs._root; }
+
+		node_pointer get_root() const { return _root; }
 
 	private:
 
