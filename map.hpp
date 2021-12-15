@@ -77,6 +77,15 @@ namespace ft {
 		map (const map& x)
 		: _root(create_node_sentinel(0)), _alloc(x._alloc), _alnode(x._alloc), _comp(x._comp), _size(0) { this->insert(x.begin(), x.end()); }
 
+		map& operator=(const map& x)
+		{
+			if (this == &x) { return *this; }
+			this->clear();
+			place_sentinels();
+			this->insert(x.begin(), x.end());
+			return *this;
+		}
+
 		~map()
 		{
 			destroy_content_recursive(_root);
@@ -352,6 +361,13 @@ namespace ft {
 			--_size;
 			place_sentinels();
 			return 1;
+		}
+
+		void clear()
+		{
+			this->~map();
+			_size = 0;
+			_root = 0;
 		}
 
 		/*
