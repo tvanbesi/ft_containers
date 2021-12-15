@@ -216,7 +216,6 @@ namespace ft {
 				return iterator(_root);
 			}
 			iterator previous_position;
-			node_pointer current;
 			if (_comp((*position).first, val.first))
 			{
 				do
