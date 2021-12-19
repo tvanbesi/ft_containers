@@ -341,6 +341,16 @@ namespace ft {
 			place_sentinels();
 		}
 
+		void swap(map &x)
+		{
+			node_pointer tmp_root = _root;
+			size_type tmp_size = _size;
+			_root = x._root;
+			_size = x._size;
+			x._root = tmp_root;
+			x._size = tmp_size;
+		}
+
 		void clear()
 		{
 			this->~map();
