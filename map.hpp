@@ -364,6 +364,12 @@ namespace ft {
 
 		key_compare key_comp() const { return _comp; }
 
+		/*
+		**	Allocator
+		*/
+
+		allocator_type get_allocator() const { return _alloc; }
+
 	private:
 
 		/*
