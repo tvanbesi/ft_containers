@@ -190,6 +190,7 @@ namespace ft {
 				else
 					break ;
 			}
+			place_sentinels();
 			return current->content->second;
 		}
 
@@ -288,6 +289,8 @@ namespace ft {
 			place_sentinels();
 		}
 
+		void erase (iterator position) { erase((*position).first); }
+
 		size_type erase(const key_type& k)
 		{
 			if (!_root || _root->issentinel())
@@ -317,50 +320,25 @@ namespace ft {
 				else
 					break ;
 			}
-			if (!current)
+			return delete_node(current);
+		}
+
+		void erase(iterator first, iterator last)
+		{
+			if (first == last)
+				return ;
+			vector<key_type> v;
+			v.reserve(std::distance(first, last));
+			while (first != last)
 			{
-				place_sentinels();
-				return 0;
+				v.push_back((*first).first);
+				++first;
 			}
-			_alloc.destroy(current->content);
-			_alloc.deallocate(current->content, 1);
-			node_pointer child;
-			if (current->isleaf())
-			{
-				if (current != _root)
-				{
-					if (current->child_side() == RIGHT)
-						current->parent->right_child = 0;
-					else
-						current->parent->left_child = 0;
-				}
-				_alnode.destroy(current);
-				_alnode.deallocate(current, 1);
-			}
-			else if ((child = current->has_one_child_leaf()))
-			{
-				current->content = child->content;
-				if (current->right_child == child)
-					current->right_child = 0;
-				else
-					current->left_child = 0;
-				_alnode.destroy(child);
-				_alnode.deallocate(child, 1);
-			}
-			else
-			{
-				child = current->inorder_xcessor();
-				current->content = child->content;
-				if (child->child_side() == RIGHT)
-					child->parent->right_child = 0;
-				else
-					child->parent->left_child = 0;
-				_alnode.destroy(child);
-				_alnode.deallocate(child, 1);
-			}
-			--_size;
+			for (typename vector<key_type>::size_type i = 0; i < v.size(); ++i)
+				this->erase(v[i]);
+			clear_sentinels();
+			_root = balance_bst(_root, _size);
 			place_sentinels();
-			return 1;
 		}
 
 		void clear()
@@ -447,6 +425,67 @@ namespace ft {
 					break ;
 			}
 			return make_pair(root, false);
+		}
+
+		size_type delete_node(node_pointer node)
+		{
+			_alloc.destroy(node->content);
+			_alloc.deallocate(node->content, 1);
+			node_pointer child;
+			if (node->isleaf())
+			{
+				if (node != _root)
+				{
+					if (node->child_side() == RIGHT)
+						node->parent->right_child = 0;
+					else
+						node->parent->left_child = 0;
+				}
+				else
+					_root = 0;
+				_alnode.destroy(node);
+				_alnode.deallocate(node, 1);
+			}
+			else if ((child = node->has_one_child_leaf()))
+			{
+				node->content = child->content;
+				if (node->right_child == child)
+					node->right_child = 0;
+				else
+					node->left_child = 0;
+				_alnode.destroy(child);
+				_alnode.deallocate(child, 1);
+			}
+			else
+			{
+				child = node->inorder_xcessor();
+				node->content = child->content;
+				if (child->child_side() == RIGHT)
+				{
+					if (child->right_child)
+					{
+						child->parent->right_child = child->right_child;
+						child->right_child->parent = child->parent;
+					}
+					else
+						child->parent->right_child = 0;
+				}
+				else
+				{
+					if (child->left_child)
+					{
+						child->parent->left_child = child->left_child;
+						child->left_child->parent = child->parent;
+					}
+					else
+						child->parent->left_child = 0;
+				}
+				_alnode.destroy(child);
+				_alnode.deallocate(child, 1);
+			}
+			--_size;
+			place_sentinels();
+			return 1;
 		}
 
 		template <class InputIterator>
