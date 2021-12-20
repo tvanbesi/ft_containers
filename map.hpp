@@ -378,6 +378,7 @@ namespace ft {
 		*/
 
 		key_compare key_comp() const { return _comp; }
+		value_compare value_comp() const { return value_compare(key_compare()); };
 
 		/*
 		**	Operations
