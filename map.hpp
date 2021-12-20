@@ -407,46 +407,126 @@ namespace ft {
 
 		iterator lower_bound(const key_type& k)
 		{
-			iterator r = find(k);
-			if (r.issentinel())
-				return r;
-			--r;
-			if (r.issentinel())
+			if (this->empty())
 				return this->end();
-			return r;
+			iterator previous;
+			iterator current = iterator(_root);
+			while (true)
+			{
+				if (_comp(k, (*current).first))
+				{
+					previous = current;
+					--current;
+					if (current.issentinel())
+						return previous;
+					else if (_comp((*current).first, k) && _comp(k, (*previous).first))
+						return current;
+				}
+				else if (_comp((*current).first, k))
+				{
+					previous = current;
+					++current;
+					if (current.issentinel())
+						return this->end();
+					else if (_comp((*previous).first, k) && _comp(k, (*current).first))
+						return previous;
+				}
+				else
+					return current;
+			}
 		}
 
 		const_iterator lower_bound(const key_type& k) const
 		{
-			const_iterator r = find(k);
-			if (r.issentinel())
-				return r;
-			--r;
-			if (r.issentinel())
+			if (this->empty())
 				return this->end();
-			return r;
+			const_iterator previous;
+			const_iterator current = const_iterator(_root);
+			while (true)
+			{
+				if (_comp(k, (*current).first))
+				{
+					previous = current;
+					--current;
+					if (current.issentinel())
+						return previous;
+					else if (_comp((*current).first, k) && _comp(k, (*previous).first))
+						return current;
+				}
+				else if (_comp((*current).first, k))
+				{
+					previous = current;
+					++current;
+					if (current.issentinel())
+						return this->end();
+					else if (_comp((*previous).first, k) && _comp(k, (*current).first))
+						return previous;
+				}
+				else
+					return current;
+			}
 		}
 
 		iterator upper_bound(const key_type& k)
 		{
-			iterator r = find(k);
-			if (r.issentinel())
-				return r;
-			++r;
-			if (r.issentinel())
+			if (this->empty())
 				return this->end();
-			return r;
+			iterator previous;
+			iterator current = iterator(_root);
+			while (true)
+			{
+				if (_comp(k, (*current).first))
+				{
+					previous = current;
+					--current;
+					if (current.issentinel())
+						return previous;
+					else if (_comp((*current).first, k) && _comp(k, (*previous).first))
+						return previous;
+				}
+				else if (_comp((*current).first, k))
+				{
+					previous = current;
+					++current;
+					if (current.issentinel())
+						return this->end();
+					else if (_comp((*previous).first, k) && _comp(k, (*current).first))
+						return current;
+				}
+				else
+					return ++current;
+			}
 		}
 
 		const_iterator upper_bound(const key_type& k) const
 		{
-			const_iterator r = find(k);
-			if (r.issentinel())
-				return r;
-			++r;
-			if (r.issentinel())
+			if (this->empty())
 				return this->end();
-			return r;
+			const_iterator previous;
+			const_iterator current = const_iterator(_root);
+			while (true)
+			{
+				if (_comp(k, (*current).first))
+				{
+					previous = current;
+					--current;
+					if (current.issentinel())
+						return previous;
+					else if (_comp((*current).first, k) && _comp(k, (*previous).first))
+						return previous;
+				}
+				else if (_comp((*current).first, k))
+				{
+					previous = current;
+					++current;
+					if (current.issentinel())
+						return this->end();
+					else if (_comp((*previous).first, k) && _comp(k, (*current).first))
+						return current;
+				}
+				else
+					return ++current;
+			}
 		}
 
 		pair<iterator, iterator> equal_range(const key_type& k)
