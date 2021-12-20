@@ -371,41 +371,38 @@ namespace ft {
 		iterator find(const key_type& k)
 		{
 			node_pointer current = _root;
-			clear_sentinels();
-			while (current)
+			while (current && !current->issentinel())
 			{
 				if (_comp(k, current->content->first))
 					current = current->left_child;
 				else if (_comp(current->content->first, k))
 					current = current->right_child;
 				else
-				{
-					place_sentinels();
 					return iterator(current);
-				}
 			}
-			place_sentinels();
 			return this->end();
 		}
 
 		const_iterator find(const key_type& k) const
 		{
 			node_pointer current = _root;
-			clear_sentinels();
-			while (current)
+			while (current && !current->issentinel())
 			{
 				if (_comp(k, current->content->first))
 					current = current->left_child;
 				else if (_comp(current->content->first, k))
 					current = current->right_child;
 				else
-				{
-					place_sentinels();
 					return const_iterator(current);
-				}
 			}
-			place_sentinels();
 			return this->end();
+		}
+
+		size_type count(const key_type& k) const
+		{
+			if (this->find(k) == this->end())
+				return 0;
+			return 1;
 		}
 
 		/*
