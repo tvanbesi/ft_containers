@@ -42,10 +42,6 @@ namespace ft {
 				return LEFT;
 		}
 
-		/*
-		**	returns inorder successor if there is a right_child or the inorder predecessor if there isn't
-		*/
-
 		pair<node_pointer, int> inorder_xcessor()
 		{
 			node_pointer r = this;
@@ -54,14 +50,14 @@ namespace ft {
 				r = r->right_child;
 				while (r->left_child)
 					r = r->left_child;
-				return make_pair(r, static_cast<int>(SUCCESSOR));
+				return pair<node_pointer, int>(r, SUCCESSOR);
 			}
 			else
 			{
 				r = r->left_child;
 				while (r->right_child)
 					r = r->right_child;
-				return make_pair(r, static_cast<int>(PREDECESSOR));
+				return pair<node_pointer, int>(r, PREDECESSOR);
 			}
 		}
 

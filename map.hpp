@@ -168,7 +168,7 @@ namespace ft {
 			clear_sentinels();
 			if (!_root)
 			{
-				_root = create_node(make_pair(k, mapped_type()), 0);
+				_root = create_node(pair<key_type, mapped_type>(k, mapped_type()), 0);
 				++_size;
 				place_sentinels();
 				return _root->content->second;
@@ -180,7 +180,7 @@ namespace ft {
 				{
 					if (!current->left_child)
 					{
-						current->left_child = create_node(make_pair(k, mapped_type()), current);
+						current->left_child = create_node(pair<key_type, mapped_type>(k, mapped_type()), current);
 						++_size;
 						mapped_type& r = current->left_child->content->second;
 						_root = balance_bst(_root, _size);
@@ -193,7 +193,7 @@ namespace ft {
 				{
 					if (!current->right_child)
 					{
-						current->right_child = create_node(make_pair(k, mapped_type()), current);
+						current->right_child = create_node(pair<key_type, mapped_type>(k, mapped_type()), current);
 						++_size;
 						mapped_type& r = current->right_child->content->second;
 						_root = balance_bst(_root, _size);
