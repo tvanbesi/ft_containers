@@ -474,26 +474,51 @@ namespace ft {
 			}
 			else
 			{
-				child = node->inorder_xcessor();
+				pair<node_pointer, int> xcessor;
+				xcessor = node->inorder_xcessor();
+				child = xcessor.first;
+				int xcessor_type = xcessor.second;
+				int side;
 				node->content = child->content;
-				if (child->child_side() == RIGHT)
+				side = child->child_side();
+				if (xcessor_type == SUCCESSOR)
 				{
 					if (child->right_child)
 					{
-						child->parent->right_child = child->right_child;
-						child->right_child->parent = child->parent;
+						if (side == RIGHT)
+						{
+							child->parent->right_child = child->right_child;
+							child->right_child->parent = child->parent;
+						}
+						else if (side == LEFT)
+						{
+							child->parent->left_child = child->right_child;
+							child->right_child->parent = child->parent;
+						}
 					}
-					else
+					else if (side == RIGHT)
 						child->parent->right_child = 0;
+					else if (side == LEFT)
+						child->parent->left_child = 0;
 				}
-				else
+				else if (xcessor_type == PREDECESSOR)
 				{
 					if (child->left_child)
 					{
-						child->parent->left_child = child->left_child;
-						child->left_child->parent = child->parent;
+						if (side == RIGHT)
+						{
+							child->parent->right_child = child->left_child;
+							child->left_child->parent = child->parent;
+						}
+						else if (side == LEFT)
+						{
+							child->parent->left_child = child->left_child;
+							child->left_child->parent = child->parent;
+						}
 					}
-					else
+					else if (side == RIGHT)
+						child->parent->right_child = 0;
+					else if (side == LEFT)
 						child->parent->left_child = 0;
 				}
 				_alnode.destroy(child);

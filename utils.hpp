@@ -3,4 +3,6 @@
 
 enum Node_type { ROOT, LEFT, RIGHT };
 
+enum Xcessor_type { PREDECESSOR, SUCCESSOR };
+
 #endif
