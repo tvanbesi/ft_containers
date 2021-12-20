@@ -405,6 +405,50 @@ namespace ft {
 			return 1;
 		}
 
+		iterator lower_bound(const key_type& k)
+		{
+			iterator r = find(k);
+			if (r.issentinel())
+				return r;
+			--r;
+			if (r.issentinel())
+				return this->end();
+			return r;
+		}
+
+		const_iterator lower_bound(const key_type& k) const
+		{
+			const_iterator r = find(k);
+			if (r.issentinel())
+				return r;
+			--r;
+			if (r.issentinel())
+				return this->end();
+			return r;
+		}
+
+		iterator upper_bound(const key_type& k)
+		{
+			iterator r = find(k);
+			if (r.issentinel())
+				return r;
+			++r;
+			if (r.issentinel())
+				return this->end();
+			return r;
+		}
+
+		const_iterator upper_bound(const key_type& k) const
+		{
+			const_iterator r = find(k);
+			if (r.issentinel())
+				return r;
+			++r;
+			if (r.issentinel())
+				return this->end();
+			return r;
+		}
+
 		/*
 		**	Allocator
 		*/
