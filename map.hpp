@@ -365,6 +365,30 @@ namespace ft {
 		key_compare key_comp() const { return _comp; }
 
 		/*
+		**	Operations
+		*/
+
+		iterator find(const key_type& k)
+		{
+			node_pointer current = _root;
+			clear_sentinels();
+			while (current)
+			{
+				if (_comp(k, current->content->first))
+					current = current->left_child;
+				else if (_comp(current->content->first, k))
+					current = current->right_child;
+				else
+				{
+					place_sentinels();
+					return iterator(current);
+				}
+			}
+			place_sentinels();
+			return this->end();
+		}
+
+		/*
 		**	Allocator
 		*/
 
