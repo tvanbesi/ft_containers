@@ -5,11 +5,14 @@
 # include "node.hpp"
 # include "map.hpp"
 # include "utils.hpp"
+# include "type_traits.hpp"
 
 namespace ft {
 
 	template <class T>
 	class iterator_map : public ft::iterator<std::bidirectional_iterator_tag, T> {
+	friend class iterator_map<typename remove_const<T>::value_type>;
+	friend class iterator_map<const T>;
 
 	public:
 
@@ -32,7 +35,9 @@ namespace ft {
 		iterator_map(node_pointer root = 0) : _root(root) {}
 		iterator_map(const iterator_map& src) : _root(src._root) {}
 		iterator_map& operator=(const iterator_map& src) { _root = src._root; return *this; }
-		~iterator_map() {} 
+		~iterator_map() {}
+
+		operator iterator_map<const value_type>() const { return _root; }
 
 		iterator_map& operator++()
 		{
