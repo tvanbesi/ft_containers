@@ -388,6 +388,26 @@ namespace ft {
 			return this->end();
 		}
 
+		const_iterator find(const key_type& k) const
+		{
+			node_pointer current = _root;
+			clear_sentinels();
+			while (current)
+			{
+				if (_comp(k, current->content->first))
+					current = current->left_child;
+				else if (_comp(current->content->first, k))
+					current = current->right_child;
+				else
+				{
+					place_sentinels();
+					return const_iterator(current);
+				}
+			}
+			place_sentinels();
+			return this->end();
+		}
+
 		/*
 		**	Allocator
 		*/
