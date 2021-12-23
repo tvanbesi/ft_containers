@@ -10,6 +10,7 @@
 # include "iterator_map.hpp"
 # include "vector.hpp"
 # include "utils.hpp"
+# include "reverse_iterator.hpp"
 
 namespace ft {
 
@@ -59,9 +60,9 @@ namespace ft {
 		typedef typename	allocator_type::const_pointer					const_pointer;
 		typedef typename	ft::iterator_map<value_type>					iterator;
 		typedef typename	ft::iterator_map<const value_type>				const_iterator;
-		//reverse_iterator
-		//const_reverse_iterator
-		//difference_type
+		typedef typename	ft::reverse_iterator<iterator>					reverse_iterator;
+		typedef typename	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+		typedef typename	ft::iterator_traits<iterator>::difference_type	difference_type;
 		typedef				size_t											size_type;
 		typedef				Node<const key_type, mapped_type>				node;
 		typedef				node*											node_pointer;
@@ -139,6 +140,30 @@ namespace ft {
 		iterator end() { return iterator(_sentinel_end); }
 
 		const_iterator end() const { return const_iterator(_sentinel_end); }
+
+		reverse_iterator rbegin()
+		{
+			if (this->empty())
+				return this->rend();
+			node_pointer r = _root;
+			while (r->right_child)
+				r = r->right_child;
+			return reverse_iterator(r);
+		}
+
+		const_reverse_iterator rbegin() const
+		{
+			if (this->empty())
+				return this->rend();
+			node_pointer r = _root;
+			while (r->right_child)
+				r = r->right_child;
+			return const_reverse_iterator(r);
+		}
+
+		reverse_iterator rend() { return reverse_iterator(this->begin()); }
+
+		const_reverse_iterator rend() const { return const_reverse_iterator(this->begin()); }
 
 		/*
 		**	Capacity

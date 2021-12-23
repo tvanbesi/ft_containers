@@ -8,9 +8,7 @@
 # include "type_traits.hpp"
 # include "iterator.hpp"
 # include "iterator_vector.hpp"
-
-// REMOVE WHEN DONE WITH TESTING //
-# include <iostream>
+# include "reverse_iterator.hpp"
 
 namespace ft {
 
@@ -43,8 +41,8 @@ namespace ft {
 		typedef typename	allocator_type::const_pointer								const_pointer;
 		typedef typename	ft::iterator_vector<value_type>								iterator;
 		typedef typename	ft::iterator_vector<const value_type>						const_iterator;
-		typedef typename	ft::reverse_iterator_vector<iterator>						reverse_iterator;
-		typedef typename	ft::reverse_iterator_vector<const_iterator>					const_reverse_iterator;
+		typedef typename	ft::reverse_iterator<iterator>								reverse_iterator;
+		typedef typename	ft::reverse_iterator<const_iterator>						const_reverse_iterator;
 		typedef typename	ft::iterator_traits<iterator>::difference_type				difference_type;
 		typedef				size_t														size_type;
 	
