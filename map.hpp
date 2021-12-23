@@ -555,6 +555,49 @@ namespace ft {
 
 		allocator_type get_allocator() const { return _alloc; }
 
+		/*
+		**	Non-member function overloads
+		*/
+
+		friend bool operator==(const map& lhs, const map& rhs)
+		{
+			if (lhs._size != rhs._size)
+				return false;
+			map::const_iterator it_lhs = lhs.begin();
+			map::const_iterator it_rhs = rhs.begin();
+			while (it_lhs != lhs.end())
+			{
+				if ((*it_lhs) != (*it_rhs))
+					return false;
+				++it_lhs;
+				++it_rhs;
+			}
+			return true;
+		}
+
+		friend bool operator!=(const map& lhs, const map& rhs) { return !(lhs == rhs); }
+
+		friend bool operator<(const map& lhs, const map& rhs)
+		{
+			size_type limit = lhs._size < rhs._size ? lhs._size : rhs._size;
+			map::const_iterator it_lhs = lhs.begin();
+			map::const_iterator it_rhs = rhs.begin();
+			for (size_type i = 0; i < limit; ++i)
+			{
+				if ((*it_lhs) < (*it_rhs))
+					return true;
+				if ((*it_rhs) < (*it_lhs))
+					return false;
+				++it_lhs;
+				++it_rhs;
+			}
+			return lhs._size < rhs._size;
+		}
+
+		friend bool operator>(const map& lhs, const map& rhs) { return rhs < lhs; }
+		friend bool operator<=(const map& lhs, const map& rhs) { return !(rhs < lhs); }
+		friend bool operator>=(const map& lhs, const map& rhs) { return !(lhs < rhs); }
+
 	private:
 
 		/*
