@@ -351,10 +351,16 @@ namespace ft {
 		void swap(map &x)
 		{
 			node_pointer tmp_root = _root;
+			node_pointer tmp_rend = _sentinel_rend;
+			node_pointer tmp_end = _sentinel_end;
 			size_type tmp_size = _size;
 			_root = x._root;
+			_sentinel_rend = x._sentinel_rend;
+			_sentinel_end = x._sentinel_end;
 			_size = x._size;
 			x._root = tmp_root;
+			x._sentinel_rend = tmp_rend;
+			x._sentinel_end = tmp_end;
 			x._size = tmp_size;
 		}
 
@@ -597,6 +603,8 @@ namespace ft {
 		friend bool operator>(const map& lhs, const map& rhs) { return rhs < lhs; }
 		friend bool operator<=(const map& lhs, const map& rhs) { return !(rhs < lhs); }
 		friend bool operator>=(const map& lhs, const map& rhs) { return !(lhs < rhs); }
+
+		friend void swap(map& x, map& y) { x.swap(y); }
 
 	private:
 
