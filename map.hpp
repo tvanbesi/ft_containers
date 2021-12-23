@@ -72,37 +72,42 @@ namespace ft {
 		*/
 
 		explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-		: _root(create_node_sentinel(0)), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0) {}
+		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0)
+		{
+			make_sentinels();
+		}
 
 		template <class InputIterator>
 		map	(InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
 			const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _alnode(alloc), _comp(comp), _size(0)
+		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0)
 		{
+			make_sentinels();
 			if (first == last)
-			{
-				_root = create_node_sentinel(0);
 				return ;
-			}
 			_root = make_bst(first, last);
 			_root = balance_bst(_root, _size);
 			place_sentinels();
 		}
 
 		map (const map& x)
-		: _root(create_node_sentinel(0)), _alloc(x._alloc), _alnode(x._alloc), _comp(x._comp), _size(0) { this->insert(x.begin(), x.end()); }
+		: _root(0), _alloc(x._alloc), _alnode(x._alloc), _comp(x._comp), _size(0)
+		{
+			make_sentinels();
+			this->insert(x.begin(), x.end());
+		}
 
 		map& operator=(const map& x)
 		{
 			if (this == &x) { return *this; }
 			this->clear();
-			place_sentinels();
 			this->insert(x.begin(), x.end());
 			return *this;
 		}
 
 		~map()
 		{
+			destroy_sentinels();
 			destroy_content_recursive(_root);
 			destroy_node_recursive(_root);
 		}
@@ -113,8 +118,8 @@ namespace ft {
 
 		iterator begin()
 		{
-			if (_size == 0)
-				return iterator(_root);
+			if (this->empty())
+				return this->end();
 			node_pointer r = _root;
 			while (r->left_child)
 				r = r->left_child;
@@ -123,33 +128,17 @@ namespace ft {
 
 		const_iterator begin() const
 		{
-			if (_size == 0)
-				return const_iterator(_root);
+			if (this->empty())
+				return this->end();
 			node_pointer r = _root;
 			while (r->left_child)
 				r = r->left_child;
 			return const_iterator(r->parent);
 		}
 
-		iterator end()
-		{
-			if (_size == 0)
-				return iterator(_root);
-			node_pointer r = _root;
-			while (r->right_child)
-				r = r->right_child;
-			return iterator(r);
-		}
+		iterator end() { return iterator(_sentinel_end); }
 
-		const_iterator end() const
-		{
-			if (_size == 0)
-				return const_iterator(_root);
-			node_pointer r = _root;
-			while (r->right_child)
-				r = r->right_child;
-			return const_iterator(r);
-		}
+		const_iterator end() const { return const_iterator(_sentinel_end); }
 
 		/*
 		**	Capacity
@@ -165,8 +154,8 @@ namespace ft {
 
 		mapped_type& operator[](const key_type& k)
 		{
-			clear_sentinels();
-			if (!_root)
+			disconnect_sentinels();
+			if (this->empty())
 			{
 				_root = create_node(pair<key_type, mapped_type>(k, mapped_type()), 0);
 				++_size;
@@ -215,7 +204,7 @@ namespace ft {
 
 		pair<iterator, bool> insert(const value_type& val)
 		{
-			clear_sentinels();
+			disconnect_sentinels();
 			if (!_root)
 			{
 				_root = create_node(val, 0);
@@ -233,7 +222,7 @@ namespace ft {
 		{
 			if (this->empty())
 			{
-				clear_sentinels();
+				disconnect_sentinels();
 				_root = create_node(val, 0);
 				++_size;
 				place_sentinels();
@@ -261,7 +250,7 @@ namespace ft {
 						return position;
 				}
 				while (!(_comp((*previous_position).first, val.first) && _comp(val.first, (*position).first)));
-				clear_sentinels();
+				disconnect_sentinels();
 				pair<node_pointer, bool> r = insert_node(position.get_root(), val);
 				return iterator(r.first);
 			}
@@ -276,7 +265,7 @@ namespace ft {
 						return position;
 				}
 				while (!(_comp((*position).first, val.first) && _comp(val.first, (*previous_position).first)));
-				clear_sentinels();
+				disconnect_sentinels();
 				pair<node_pointer, bool> r = insert_node(previous_position.get_root(), val);
 				return iterator(r.first);
 			}
@@ -289,7 +278,7 @@ namespace ft {
 		{
 			if (first == last)
 				return ;
-			clear_sentinels();
+			disconnect_sentinels();
 			vector<node_pointer> v;
 			v.reserve(_size + std::distance(first, last));
 			store_bst(_root, v);
@@ -310,7 +299,7 @@ namespace ft {
 		{
 			if (!_root || _root->issentinel())
 				return 0;
-			clear_sentinels();
+			disconnect_sentinels();
 			node_pointer current = _root;
 			while (current)
 			{
@@ -351,7 +340,7 @@ namespace ft {
 			}
 			for (typename vector<key_type>::size_type i = 0; i < v.size(); ++i)
 				this->erase(v[i]);
-			clear_sentinels();
+			disconnect_sentinels();
 			_root = balance_bst(_root, _size);
 			place_sentinels();
 		}
@@ -368,7 +357,9 @@ namespace ft {
 
 		void clear()
 		{
-			this->~map();
+			disconnect_sentinels();
+			destroy_content_recursive(_root);
+			destroy_node_recursive(_root);
 			_size = 0;
 			_root = 0;
 		}
@@ -568,6 +559,8 @@ namespace ft {
 		*/
 
 		node_pointer	_root;
+		node_pointer	_sentinel_end;
+		node_pointer	_sentinel_rend;
 		allocator_type	_alloc;
 		alnode			_alnode;
 		key_compare		_comp;
@@ -588,13 +581,13 @@ namespace ft {
 			return new_node;
 		}
 
-		node_pointer create_node_sentinel(node_pointer parent)
+		node_pointer create_node_sentinel()
 		{
 			node_pointer new_node = _alnode.allocate(1);
 			new_node->content = 0;
 			new_node->left_child = 0;
 			new_node->right_child = 0;
-			new_node->parent = parent;
+			new_node->parent = 0;
 			return new_node;
 		}
 
@@ -803,11 +796,8 @@ namespace ft {
 				return ;
 			destroy_content_recursive(root->left_child);
 			destroy_content_recursive(root->right_child);
-			if (!root->issentinel())
-			{
-				_alloc.destroy(root->content);
-				_alloc.deallocate(root->content, 1);
-			}
+			_alloc.destroy(root->content);
+			_alloc.deallocate(root->content, 1);
 		}
 
 		void destroy_node_recursive(node_pointer root)
@@ -820,44 +810,49 @@ namespace ft {
 			_alnode.deallocate(root, 1);
 		}
 
-		void place_sentinels()
+		void destroy_sentinels()
 		{
-			if (!_root)
-			{
-				_root = create_node_sentinel(0);
-				return ;
-			}
-			node_pointer current = _root;
-			while (current->left_child)
-				current = current->left_child;
-			current->left_child = create_node_sentinel(current);
-			current = _root;
-			while (current->right_child)
-				current = current->right_child;
-			current->right_child = create_node_sentinel(current);
+			disconnect_sentinels();
+			_alnode.destroy(_sentinel_rend);
+			_alnode.deallocate(_sentinel_rend, 1);
+			_alnode.destroy(_sentinel_end);
+			_alnode.deallocate(_sentinel_end, 1);
 		}
 
-		void clear_sentinels()
+		void make_sentinels()
 		{
-			if (_root->issentinel())
-			{
-				_alnode.destroy(_root);
-				_alnode.deallocate(_root, 1);
-				_root = 0;
+			_sentinel_end = create_node_sentinel();
+			_sentinel_rend = create_node_sentinel();
+		}
+
+		void place_sentinels()
+		{
+			if (this->empty())
 				return ;
-			}
 			node_pointer current = _root;
 			while (current->left_child)
 				current = current->left_child;
-			current->parent->left_child = 0;
-			_alnode.destroy(current);
-			_alnode.deallocate(current, 1);
+			current->left_child = _sentinel_rend;
+			_sentinel_rend->parent = current;
 			current = _root;
 			while (current->right_child)
 				current = current->right_child;
-			current->parent->right_child = 0;
-			_alnode.destroy(current);
-			_alnode.deallocate(current, 1);
+			current->right_child = _sentinel_end;
+			_sentinel_end->parent = current;
+		}
+
+		void disconnect_sentinels()
+		{
+			if (_sentinel_rend->parent)
+			{
+				_sentinel_rend->parent->left_child = 0;
+				_sentinel_rend->parent = 0;
+			}
+			if (_sentinel_end->parent)
+			{
+				_sentinel_end->parent->right_child = 0;
+				_sentinel_end->parent = 0;
+			}
 		}
 
 	};
