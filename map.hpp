@@ -205,7 +205,7 @@ namespace ft {
 		pair<iterator, bool> insert(const value_type& val)
 		{
 			disconnect_sentinels();
-			if (!_root)
+			if (this->empty())
 			{
 				_root = create_node(val, 0);
 				++_size;
@@ -213,6 +213,7 @@ namespace ft {
 				return ft::make_pair(iterator(_root), true);
 			}
 			pair<node_pointer, bool> r = insert_node(_root, val);
+			place_sentinels();
 			if (r.second)
 				return (ft::make_pair(iterator(r.first), true));
 			return (ft::make_pair(iterator(r.first), false));
@@ -252,6 +253,7 @@ namespace ft {
 				while (!(_comp((*previous_position).first, val.first) && _comp(val.first, (*position).first)));
 				disconnect_sentinels();
 				pair<node_pointer, bool> r = insert_node(position.get_root(), val);
+				place_sentinels();
 				return iterator(r.first);
 			}
 			else if (_comp(val.first, (*position).first))
@@ -267,6 +269,7 @@ namespace ft {
 				while (!(_comp((*position).first, val.first) && _comp(val.first, (*previous_position).first)));
 				disconnect_sentinels();
 				pair<node_pointer, bool> r = insert_node(previous_position.get_root(), val);
+				place_sentinels();
 				return iterator(r.first);
 			}
 			else
@@ -603,7 +606,6 @@ namespace ft {
 						node_pointer r = root->left_child;
 						++_size;
 						_root = balance_bst(_root, _size);
-						place_sentinels();
 						return ft::make_pair(r, true);
 					}
 					root = root->left_child;
@@ -616,7 +618,6 @@ namespace ft {
 						node_pointer r = root->right_child;
 						++_size;
 						_root = balance_bst(_root, _size);
-						place_sentinels();
 						return ft::make_pair(r, true);
 					}
 					root = root->right_child;
