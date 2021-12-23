@@ -157,7 +157,7 @@ namespace ft {
 			disconnect_sentinels();
 			if (this->empty())
 			{
-				_root = create_node(pair<key_type, mapped_type>(k, mapped_type()), 0);
+				_root = create_node(ft::make_pair(k, mapped_type()), 0);
 				++_size;
 				place_sentinels();
 				return _root->content->second;
@@ -169,7 +169,7 @@ namespace ft {
 				{
 					if (!current->left_child)
 					{
-						current->left_child = create_node(pair<key_type, mapped_type>(k, mapped_type()), current);
+						current->left_child = create_node(ft::make_pair(k, mapped_type()), 0);
 						++_size;
 						mapped_type& r = current->left_child->content->second;
 						_root = balance_bst(_root, _size);
@@ -182,7 +182,7 @@ namespace ft {
 				{
 					if (!current->right_child)
 					{
-						current->right_child = create_node(pair<key_type, mapped_type>(k, mapped_type()), current);
+						current->right_child = create_node(ft::make_pair(k, mapped_type()), 0);
 						++_size;
 						mapped_type& r = current->right_child->content->second;
 						_root = balance_bst(_root, _size);
@@ -210,12 +210,12 @@ namespace ft {
 				_root = create_node(val, 0);
 				++_size;
 				place_sentinels();
-				return make_pair(iterator(_root), true);
+				return ft::make_pair(iterator(_root), true);
 			}
 			pair<node_pointer, bool> r = insert_node(_root, val);
 			if (r.second)
-				return (make_pair(iterator(r.first), true));
-			return (make_pair(iterator(r.first), false));
+				return (ft::make_pair(iterator(r.first), true));
+			return (ft::make_pair(iterator(r.first), false));
 		}
 
 		iterator insert(iterator position, const value_type& val)
@@ -604,7 +604,7 @@ namespace ft {
 						++_size;
 						_root = balance_bst(_root, _size);
 						place_sentinels();
-						return make_pair(r, true);
+						return ft::make_pair(r, true);
 					}
 					root = root->left_child;
 				}
@@ -617,14 +617,14 @@ namespace ft {
 						++_size;
 						_root = balance_bst(_root, _size);
 						place_sentinels();
-						return make_pair(r, true);
+						return ft::make_pair(r, true);
 					}
 					root = root->right_child;
 				}
 				else
 					break ;
 			}
-			return make_pair(root, false);
+			return ft::make_pair(root, false);
 		}
 
 		size_type delete_node(node_pointer node)
