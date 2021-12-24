@@ -14,9 +14,6 @@
 
 namespace ft {
 
-	template <class node_pointer>
-	bool comp_nodes(node_pointer i, node_pointer j) { return (i->content->first < j->content->first); }
-
 	/*
 	**	map class template
 	*/
@@ -238,9 +235,13 @@ namespace ft {
 				return ft::make_pair(iterator(_root), true);
 			}
 			pair<node_pointer, bool> r = insert_node(_root, val);
-			place_sentinels();
 			if (r.second)
+			{
+				_root = balance_bst(_root, _size);
+				place_sentinels();
 				return (ft::make_pair(iterator(r.first), true));
+			}
+			place_sentinels();
 			return (ft::make_pair(iterator(r.first), false));
 		}
 
@@ -278,6 +279,8 @@ namespace ft {
 				while (!(_comp((*previous_position).first, val.first) && _comp(val.first, (*position).first)));
 				disconnect_sentinels();
 				pair<node_pointer, bool> r = insert_node(position.get_root(), val);
+				if (r.second)
+					_root = balance_bst(_root, _size);
 				place_sentinels();
 				return iterator(r.first);
 			}
@@ -294,6 +297,8 @@ namespace ft {
 				while (!(_comp((*position).first, val.first) && _comp(val.first, (*previous_position).first)));
 				disconnect_sentinels();
 				pair<node_pointer, bool> r = insert_node(previous_position.get_root(), val);
+				if (r.second)
+					_root = balance_bst(_root, _size);
 				place_sentinels();
 				return iterator(r.first);
 			}
@@ -306,18 +311,13 @@ namespace ft {
 		{
 			if (first == last)
 				return ;
-			disconnect_sentinels();
-			vector<node_pointer> v;
-			v.reserve(_size + std::distance(first, last));
-			store_bst(_root, v);
 			while (first != last)
 			{
-				v.push_back(create_node(*first, 0));
+				this->insert(*first);
 				++first;
 			}
-			std::sort(v.begin(), v.end(), comp_nodes<node_pointer>);
-			_root = vector_to_balanced_bst(v, 0, v.size() - 1, 0);
-			_size = v.size();
+			disconnect_sentinels();
+			_root = balance_bst(_root, _size);
 			place_sentinels();
 		}
 
@@ -681,7 +681,6 @@ namespace ft {
 						root->left_child = create_node(val, root);
 						node_pointer r = root->left_child;
 						++_size;
-						_root = balance_bst(_root, _size);
 						return ft::make_pair(r, true);
 					}
 					root = root->left_child;
@@ -693,7 +692,6 @@ namespace ft {
 						root->right_child = create_node(val, root);
 						node_pointer r = root->right_child;
 						++_size;
-						_root = balance_bst(_root, _size);
 						return ft::make_pair(r, true);
 					}
 					root = root->right_child;
