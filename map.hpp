@@ -470,7 +470,7 @@ namespace ft {
 					if (current.issentinel())
 						return this->end();
 					else if (_comp((*previous).first, k) && _comp(k, (*current).first))
-						return previous;
+						return current;
 				}
 				else
 					return current;
@@ -501,7 +501,7 @@ namespace ft {
 					if (current.issentinel())
 						return this->end();
 					else if (_comp((*previous).first, k) && _comp(k, (*current).first))
-						return previous;
+						return current;
 				}
 				else
 					return current;
