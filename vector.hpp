@@ -54,7 +54,7 @@ namespace ft {
 			(const allocator_type& alloc = allocator_type())
 		: _size(0), _capacity(0), _alloc(alloc)
 		{
-			_vector = _alloc.allocate(_size);
+			_vector = _alloc.allocate(_capacity);
 		}
 
 		explicit vector
@@ -62,7 +62,7 @@ namespace ft {
 			const allocator_type& alloc = allocator_type())
 		: _size(n), _capacity(n), _alloc(alloc)
 		{
-			_vector = _alloc.allocate(_size);
+			_vector = _alloc.allocate(_capacity);
 			for (size_type i = 0; i < _size; ++i) { _alloc.construct(&_vector[i], val); }
 		}
 
@@ -96,7 +96,7 @@ namespace ft {
 			(const vector& x)
 		: _size(x._size), _capacity(x._capacity), _alloc(x._alloc)
 		{
-			_vector = _alloc.allocate(_size);
+			_vector = _alloc.allocate(_capacity);
 			const_iterator first = x.begin();
 			for	(size_type i = 0; i < _size; ++i, ++first) { _alloc.construct(&_vector[i], *first); }
 		}
