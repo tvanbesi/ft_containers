@@ -1,7 +1,13 @@
 #ifndef NODE_HPP
 # define NODE_HPP
 
-# include "utils.hpp"
+enum Node_color { BLACK, RED };
+
+# define LEFT	0
+# define RIGHT	1
+# define left	child[LEFT]
+# define right	child[RIGHT]
+# define child_side(node) (node == node->parent->right ? RIGHT : LEFT)
 
 namespace ft {
 
@@ -16,51 +22,27 @@ namespace ft {
 		typedef				Node*				node_pointer;
 
 		pointer			content;
-		node_pointer	left_child;
-		node_pointer	right_child;
 		node_pointer	parent;
+		node_pointer	child[2];
+		enum Node_color	color;
 
-		bool issentinel() { return !this->content; }
-		bool isleaf() { return !this->right_child && !this->left_child; }
-
-		node_pointer has_one_child_leaf()
+		node_pointer inorder_successor()
 		{
-			if (!this->right_child && this->left_child && !this->left_child->right_child && !this->left_child->left_child)
-				return this->left_child;
-			else if (this->right_child && !this->left_child && !this->right_child->right_child && !this->right_child->left_child)
-				return this->right_child;
-			return 0;
+			node_pointer r;
+			r = this->right;
+			while (r->left)
+				r = r->left;
+			return r;
 		}
 
-		int child_side()
+		node_pointer inorder_predecessor()
 		{
-			if (!this->parent)
-				return ROOT;
-			else if (this->parent->right_child == this)
-				return RIGHT;
-			else
-				return LEFT;
+			node_pointer r;
+			r = this->left;
+			while (r->right)
+				r = r->right;
+			return r;
 		}
-
-		pair<node_pointer, int> inorder_xcessor()
-		{
-			node_pointer r = this;
-			if (r->right_child)
-			{
-				r = r->right_child;
-				while (r->left_child)
-					r = r->left_child;
-				return pair<node_pointer, int>(r, SUCCESSOR);
-			}
-			else
-			{
-				r = r->left_child;
-				while (r->right_child)
-					r = r->right_child;
-				return pair<node_pointer, int>(r, PREDECESSOR);
-			}
-		}
-
 	};
 
 }
