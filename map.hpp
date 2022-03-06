@@ -270,28 +270,58 @@ namespace ft {
 			return false;
 		}
 
+		void delete_node_data(node_pointer node)
+		{
+			if (node->parent)
+				node->parent->child[child_side(node)] = 0;
+			_alloc.destroy(node->content);
+			_alloc.deallocate(node->content, 1);
+			_alnode.destroy(node);
+			_alnode.deallocate(node, 1);
+		}
+
 		void delete_node(node_pointer node)
 		{
 			//simple cases:
-			if (node->parent == 0 && node->right == 0 && node->left == 0)
-			//node is root with no non-nil child
+			if (node->parent == 0 && node->right == 0 && node->left == 0) //node is root and no child
 			{
-				_alloc.destroy(node->content);
-				_alloc.deallocate(node->content, 1);
-				_alnode.destroy(node);
-				_alnode.deallocate(node, 1);
+				delete_node_data(node);
 				_root = 0;
 				return ;
 			}
 			else if (node->right && node->left)
+				node->swap(node->inorder_successor());
+			//at this point node only has at most one non-NIL child
+			if (node->color == RED)
 			{
-
+				delete_node_data(node);
+				return ;
 			}
-
+			else //node is BLACK
+			{
+				if (node->left->color == RED)
+				{
+					node->left->color = BLACK;
+					node->parent->child[child_side(node)] = node->left;
+					node->left->parent = node->parent;
+					node->parent = 0; //for delete_node_data
+					delete_node_data(node);
+					return ;
+				}
+				else if (node->right->color == RED)
+				{
+					node->right->color = BLACK;
+					node->parent->child[child_side(node)] = node->right;
+					node->right->parent = node->parent;
+					node->parent = 0; //for delete_node_data
+					delete_node_data(node);
+					return ;
+				}
+			}
+			//complex cases, here node is BLACK, not the root, and has no child
 			node_pointer parent = node->parent;
 			int side;
 			node_pointer sibling, close_nephew, distant_nephew;
-
 		}
 
 	};

@@ -43,6 +43,24 @@ namespace ft {
 				r = r->right;
 			return r;
 		}
+
+		void swap(node_pointer node)
+		{
+			//parents and children links must be changed too?
+			//write it down to check
+			pointer			tmp_content = this->content;
+			node_pointer	tmp_parent = this->parent;
+			node_pointer	tmp_child[2] = this->child;
+			enum Node_color	tmp_color = this->color;
+			this->content = node->content;
+			this->parent = node->parent;
+			this->child = node->child;
+			this->color = node->color;
+			node->content = tmp_content;
+			node->parent = tmp_parent;
+			node->child = tmp_child;
+			node->color = tmp_color;
+		}
 	};
 
 }
