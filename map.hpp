@@ -180,7 +180,7 @@ namespace ft {
 			node_pointer child;
 
 			if (pivot == 0)
-				std::cerr << "pivot is not a true node, it's gonna segfault now" << std::endl;
+				std::cerr << "error: pivot is not a true node" << std::endl;
 			child = pivot->child[rotation_side];
 			node->child[1 - rotation_side] = child;
 			if (child != 0)
@@ -291,7 +291,7 @@ namespace ft {
 			}
 			else if (node->right && node->left)
 				node->swap(node->inorder_successor());
-			//at this point node only has at most one non-NIL child
+			//at this point node only has at most one child
 			if (node->color == RED)
 			{
 				delete_node_data(node);
@@ -299,21 +299,23 @@ namespace ft {
 			}
 			else //node is BLACK
 			{
-				if (node->left->color == RED)
+				if (node->left) //node->left must be RED
 				{
 					node->left->color = BLACK;
-					node->parent->child[child_side(node)] = node->left;
+					if (node->parent)
+						node->parent->child[child_side(node)] = node->left;
 					node->left->parent = node->parent;
-					node->parent = 0; //for delete_node_data
+					node->parent = 0; //for delete_node_data()
 					delete_node_data(node);
 					return ;
 				}
-				else if (node->right->color == RED)
+				else if (node->right) //node->right must be RED
 				{
 					node->right->color = BLACK;
-					node->parent->child[child_side(node)] = node->right;
+					if (node->parent)
+						node->parent->child[child_side(node)] = node->right;
 					node->right->parent = node->parent;
-					node->parent = 0; //for delete_node_data
+					node->parent = 0; //for delete_node_data()
 					delete_node_data(node);
 					return ;
 				}
@@ -322,6 +324,56 @@ namespace ft {
 			node_pointer parent = node->parent;
 			int side;
 			node_pointer sibling, close_nephew, distant_nephew;
+
+			parent->child[child_side(node)] = 0; //this ?LEAKS?, delete data (at the end I guess)
+			do
+			{
+				side = child_side(node);
+				sibling = parent->child[1 - side];
+				distant_nephew = sibling->child[1 - side];
+				close_nephew = sibling->child[side];
+				if (sibling->color == RED) //parent, close and distant nephew are BLACK
+					goto case_delete_3;
+				//else sibling is BLACK
+				if (distant_nephew && distant_nephew->color == RED) //distant nephew RED and sibling BLACK
+					goto case_delete_6;
+				if (close_nephew && close_nephew->color == RED) //close nephew RED and sibling and distant nephew BLACK
+					goto case_delete_5;
+				if (parent->color == RED) //implies close, distant nephew BLACK as well as sibling
+					goto case_delete_4;
+				//parent, close and distant nephew, sibling are all BLACK
+				sibling->color = RED;
+				node = parent;
+			} while ((parent = node->parent) != 0);
+			//node is root
+			return ;
+			case_delete_3:
+				rotate(parent, side);
+				parent->color = RED;
+				sibling->color = BLACK;
+				sibling = close_nephew;
+				distant_nephew = sibling->child[1 - side];
+				if (distant_nephew && distant_nephew->color == RED)
+					goto case_delete_6;
+				close_nephew = sibling->child[side];
+				if (close_nephew && close_nephew->color == RED)
+					goto case_delete_5;
+			case_delete_4:
+				sibling->color = RED;
+				parent->color = BLACK;
+				return ;
+			case_delete_5:
+				rotate(sibling, 1 - side);
+				sibling->color = RED;
+				close_nephew->color = BLACK;
+				distant_nephew = sibling;
+				sibling = close_nephew;
+			case_delete_6:
+				rotate(parent, side);
+				sibling->color = parent->color;
+				parent->color = BLACK;
+				distant_nephew->color = BLACK;
+				return ;
 		}
 
 	};
