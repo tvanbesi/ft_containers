@@ -20,6 +20,7 @@ namespace ft {
 	{
 		typedef typename	ft::pair<T1, T2>*	pointer;
 		typedef				Node*				node_pointer;
+		typedef				Node&				node_reference;
 
 		pointer			content;
 		node_pointer	parent;
@@ -46,19 +47,21 @@ namespace ft {
 
 		void swap(node_pointer node)
 		{
-			//parents and children links must be changed too?
-			//write it down to check
+			std::cout << "this(root): " << this->content->first << " node: " << node->content->first << std::endl;
 			pointer			tmp_content = this->content;
 			node_pointer	tmp_parent = this->parent;
-			node_pointer	tmp_child[2] = this->child;
+			node_pointer	tmp_child_left = this->left;
+			node_pointer	tmp_child_right = this->right;
 			enum Node_color	tmp_color = this->color;
 			this->content = node->content;
 			this->parent = node->parent;
-			this->child = node->child;
+			this->left = node->left;
+			this->right = node->right;
 			this->color = node->color;
 			node->content = tmp_content;
 			node->parent = tmp_parent;
-			node->child = tmp_child;
+			node->left = tmp_child_left;
+			node->right = tmp_child_right;
 			node->color = tmp_color;
 		}
 	};

@@ -3,6 +3,10 @@
 
 //REMOVE BEFORE DEFENSE
 # include <iostream>
+# include <cstdio>
+# include <vector>
+# include <map>
+# include <cmath>
 //REMOVE BEFORE DEFENSE
 
 # include <functional>
@@ -100,6 +104,23 @@ namespace ft {
 			return insert_node(val);
 		}
 
+		void erase(const key_type & k)
+		{
+			node_pointer p = _root;
+			while (p)
+			{
+				if (_comp(k, p->content->first))
+					p = p->left;
+				else if (_comp(p->content->first, k))
+					p = p->right;
+				else
+				{
+					delete_node(p);
+					return ;
+				}
+			}
+		}
+
 		/*
 		**	Observers
 		*/
@@ -143,6 +164,110 @@ namespace ft {
 				print_tree(node->right);
 		}
 
+		void print_node(node_pointer node)
+		{
+			if (node->color == RED)
+				std::cout << "\033[31m";
+			else
+				std::cout << "\033[30m";
+			std::cout << node->content->first;
+		}
+
+		int get_max_depth(node_pointer root)
+		{
+			if (!root)
+				return 0;
+			int depth1 = get_max_depth(root->left);
+			int depth2 = get_max_depth(root->right);
+			return depth1 > depth2 ? depth1 + 1 : depth2 + 1;
+		}
+
+		void get_nodes_by_depth(std::vector<std::vector<node_pointer> > & nodes, node_pointer node = 0, int depth = 0)
+		{
+			if (!node)
+			{
+				node = _root;
+				if (!node)
+					return ; //empty
+			}
+			if (node->left)
+				get_nodes_by_depth(nodes, node->left, depth + 1);
+			else if (depth + 1 < nodes.size())
+				nodes[depth + 1].push_back(0); //dummy node
+			nodes[depth].push_back(node);
+			if (node->right)
+				get_nodes_by_depth(nodes, node->right, depth + 1);
+			else if (depth + 1 < nodes.size())
+				nodes[depth + 1].push_back(0); //dummy node
+		}
+
+		size_t sp2(int x) //sum of power of 2
+		{
+			if (x == 0) return 0;
+			size_t r = 1;
+			while (--x > 0)
+				r += pow(2, x);
+			return r;
+		}
+
+		void print_tree_ascii()
+		{
+			int elem_size = 1;
+			int depth = get_max_depth(_root);
+			std::vector<std::vector<node_pointer> > v;
+			for (int i = 0; i < depth; ++i)
+				v.push_back(std::vector<node_pointer>()); //filing v with depth
+			get_nodes_by_depth(v);
+			int i = depth - 1;
+			std::string padding;
+			for (typename std::vector<std::vector<node_pointer> >::iterator i1 = v.begin(); i1 != v.end(); ++i1)
+			{
+				padding.append(sp2(i) * elem_size, ' ');
+				std::cout << padding;
+				padding.clear();
+				padding.append(sp2(i + 1) * elem_size, ' ');
+				for (typename std::vector<node_pointer>::iterator i2 = (*i1).begin(); i2 != (*i1).end(); ++i2)
+				{
+					if (*i2)
+					{
+						if ((*i2)->color == RED)
+							std::cout << "\033[31m";
+						else
+							std::cout << "\033[37m";
+						std::cout << (*i2)->content->first << padding;
+					}
+					else
+						std::cout << "\033[37mN" << padding;
+				}
+				std::cout << std::endl;
+				--i;
+				padding.clear();
+			}
+			std::cout << "\033[0m" << std::endl; //back to normal
+		}
+
+		/*
+		0										h = 0, 0 padding
+
+		 1										h = 1, 1 padding (1 elem)
+		0 2
+
+		   4									h = 2, 3 padding (1 + 2)
+		 2   6									h = 1, d = 1, 1 padding, then 3 padding
+		1 3 5 7
+
+		   
+		       x								h = 3, 7 padding (1 + 2 + 4)
+		   x       x							h = 2, d = 1, 3 padding, then 7 padding
+		 x   x   x   x							h = 3, d = 2, 1 padding, then 3, 3, 3
+		x x x x x x x x
+
+					   x						h = 4, 15 padding (1 + 2 + 4 + 8)
+			   x	   		   x				h = 3, 7 padding, then 15
+		   x       x       x      x				h = 2, 3 padding, then 7, 7, 7
+		 x   x	 x	 x	 x	 x	 x	 x
+		x x x x x x x x x x x x x x x x
+		*/
 
 	private:
 
@@ -283,6 +408,11 @@ namespace ft {
 		void delete_node(node_pointer node)
 		{
 			//simple cases:
+			std::cout << std::boolalpha << "node to delete is root ? (before swap) " << (node == _root) << std::endl;
+			std::cout << "root: " << _root->content->first << std::endl;
+			std::cout << "root children: " << _root->left << ' ' << _root->right << std::endl;
+			std::cout << "node: " << node->content->first << std::endl;
+			std::cout << "node children: " << node->left << ' ' << node->right << std::endl;
 			if (node->parent == 0 && node->right == 0 && node->left == 0) //node is root and no child
 			{
 				delete_node_data(node);
@@ -290,8 +420,17 @@ namespace ft {
 				return ;
 			}
 			else if (node->right && node->left)
+			{
+				node_pointer tmp = node->inorder_successor();
 				node->swap(node->inorder_successor());
+				node = tmp;
+			}
 			//at this point node only has at most one child
+			std::cout << std::boolalpha << "node to delete is root ? (after swap) " << (node == _root) << std::endl;
+			std::cout << "root: " << _root->content->first << std::endl;
+			std::cout << "root children: " << _root->left << ' ' << _root->right << std::endl;
+			std::cout << "node: " << node->content->first << std::endl;
+			std::cout << "node children: " << node->left << ' ' << node->right << std::endl;
 			if (node->color == RED)
 			{
 				delete_node_data(node);
@@ -325,7 +464,7 @@ namespace ft {
 			int side;
 			node_pointer sibling, close_nephew, distant_nephew;
 
-			parent->child[child_side(node)] = 0; //this ?LEAKS?, delete data (at the end I guess)
+			parent->child[child_side(node)] = 0; //this ?LEAKS?, delete data
 			do
 			{
 				side = child_side(node);
