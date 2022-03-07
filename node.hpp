@@ -47,22 +47,9 @@ namespace ft {
 
 		void swap(node_pointer node)
 		{
-			std::cout << "this(root): " << this->content->first << " node: " << node->content->first << std::endl;
 			pointer			tmp_content = this->content;
-			node_pointer	tmp_parent = this->parent;
-			node_pointer	tmp_child_left = this->left;
-			node_pointer	tmp_child_right = this->right;
-			enum Node_color	tmp_color = this->color;
 			this->content = node->content;
-			this->parent = node->parent;
-			this->left = node->left;
-			this->right = node->right;
-			this->color = node->color;
 			node->content = tmp_content;
-			node->parent = tmp_parent;
-			node->left = tmp_child_left;
-			node->right = tmp_child_right;
-			node->color = tmp_color;
 		}
 	};
 

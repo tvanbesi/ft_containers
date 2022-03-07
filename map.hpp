@@ -408,11 +408,6 @@ namespace ft {
 		void delete_node(node_pointer node)
 		{
 			//simple cases:
-			std::cout << std::boolalpha << "node to delete is root ? (before swap) " << (node == _root) << std::endl;
-			std::cout << "root: " << _root->content->first << std::endl;
-			std::cout << "root children: " << _root->left << ' ' << _root->right << std::endl;
-			std::cout << "node: " << node->content->first << std::endl;
-			std::cout << "node children: " << node->left << ' ' << node->right << std::endl;
 			if (node->parent == 0 && node->right == 0 && node->left == 0) //node is root and no child
 			{
 				delete_node_data(node);
@@ -426,11 +421,6 @@ namespace ft {
 				node = tmp;
 			}
 			//at this point node only has at most one child
-			std::cout << std::boolalpha << "node to delete is root ? (after swap) " << (node == _root) << std::endl;
-			std::cout << "root: " << _root->content->first << std::endl;
-			std::cout << "root children: " << _root->left << ' ' << _root->right << std::endl;
-			std::cout << "node: " << node->content->first << std::endl;
-			std::cout << "node children: " << node->left << ' ' << node->right << std::endl;
 			if (node->color == RED)
 			{
 				delete_node_data(node);
@@ -464,7 +454,7 @@ namespace ft {
 			int side;
 			node_pointer sibling, close_nephew, distant_nephew;
 
-			parent->child[child_side(node)] = 0; //this ?LEAKS?, delete data
+			parent->child[child_side(node)] = 0; //this LEAKS, delete data
 			do
 			{
 				side = child_side(node);
