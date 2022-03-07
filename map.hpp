@@ -454,10 +454,13 @@ namespace ft {
 			int side;
 			node_pointer sibling, close_nephew, distant_nephew;
 
-			parent->child[child_side(node)] = 0; //this LEAKS, delete data
+			side = child_side(node);
+			parent->child[side] = 0; //this LEAKS, delete data
+			goto delete_loop;
 			do
 			{
 				side = child_side(node);
+			delete_loop:
 				sibling = parent->child[1 - side];
 				distant_nephew = sibling->child[1 - side];
 				close_nephew = sibling->child[side];
