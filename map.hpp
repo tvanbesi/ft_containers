@@ -74,10 +74,7 @@ namespace ft {
 		*/
 
 		explicit map (const key_compare & comp = key_compare(), const allocator_type & alloc = allocator_type())
-		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0)
-		{
-
-		}
+		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0) {}
 
 		/*
 		**	Iterator
@@ -403,6 +400,7 @@ namespace ft {
 			_alloc.deallocate(node->content, 1);
 			_alnode.destroy(node);
 			_alnode.deallocate(node, 1);
+			--_size;
 		}
 
 		void delete_node(node_pointer node)
@@ -434,6 +432,8 @@ namespace ft {
 					if (node->parent)
 						node->parent->child[child_side(node)] = node->left;
 					node->left->parent = node->parent;
+					if (node == _root)
+						_root = node->left;
 					node->parent = 0; //for delete_node_data()
 					delete_node_data(node);
 					return ;
@@ -444,6 +444,8 @@ namespace ft {
 					if (node->parent)
 						node->parent->child[child_side(node)] = node->right;
 					node->right->parent = node->parent;
+					if (node == _root)
+						_root = node->right;
 					node->parent = 0; //for delete_node_data()
 					delete_node_data(node);
 					return ;
@@ -455,6 +457,7 @@ namespace ft {
 			node_pointer sibling, close_nephew, distant_nephew;
 
 			side = child_side(node);
+			delete_node_data(node);
 			parent->child[side] = 0; //this LEAKS, delete data
 			goto delete_loop;
 			do
