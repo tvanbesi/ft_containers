@@ -15,6 +15,7 @@
 
 # include "pair.hpp"
 # include "node.hpp"
+# include "iterator_map.hpp"
 
 namespace ft {
 
@@ -59,11 +60,11 @@ namespace ft {
 		typedef typename	allocator_type::const_reference					const_reference;
 		typedef typename	allocator_type::pointer							pointer;
 		typedef typename	allocator_type::const_pointer					const_pointer;
-		//typedef typename	ft::iterator_map<value_type>					iterator;
-		//typedef typename	ft::iterator_map<const value_type>				const_iterator;
-		//typedef typename	ft::reverse_iterator<iterator>					reverse_iterator;
-		//typedef typename	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
-		//typedef typename	ft::iterator_traits<iterator>::difference_type	difference_type;
+		typedef typename	ft::iterator_map<value_type>					iterator;
+		typedef typename	ft::iterator_map<const value_type>				const_iterator;
+		typedef typename	ft::reverse_iterator<iterator>					reverse_iterator;
+		typedef typename	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+		typedef typename	ft::iterator_traits<iterator>::difference_type	difference_type;
 		typedef				size_t											size_type;
 		typedef				Node<const key_type, mapped_type>				node;
 		typedef				node*											node_pointer;
@@ -96,10 +97,7 @@ namespace ft {
 		**	Modifiers
 		*/
 
-		bool insert(const value_type & val)
-		{
-			return insert_node(val);
-		}
+		pair<iterator, bool> insert(const value_type & val) { return insert_node(val); }
 
 		void erase(const key_type & k)
 		{
@@ -355,13 +353,13 @@ namespace ft {
 			} while ((parent = node->parent) != 0);
 		}
 
-		bool insert_node(const value_type & val)
+		pair<iterator, bool> insert_node(const value_type & val)
 		{
 			if (!_root)
 			{
 				_root = create_node(val, 0);
 				_root->color = BLACK;
-				return true;
+				return make_pair(iterator(_root), true);
 			}
 			node_pointer node = _root;
 			while (node)
@@ -372,7 +370,7 @@ namespace ft {
 					{
 						node->left = create_node(val, node);
 						recolor_rotate(node->left);
-						return true;
+						return make_pair(iterator(node->left), true);
 					}
 					node = node->left;
 				}
@@ -382,14 +380,14 @@ namespace ft {
 					{
 						node->right = create_node(val, node);
 						recolor_rotate(node->right);
-						return true;
+						return make_pair(iterator(node->right), true);
 					}
 					node = node->right;
 				}
 				else
 					break;
 			}
-			return false;
+			return make_pair(iterator(node), false);
 		}
 
 		void delete_node_data(node_pointer node)
@@ -458,7 +456,7 @@ namespace ft {
 
 			side = child_side(node);
 			delete_node_data(node);
-			parent->child[side] = 0; //this LEAKS, delete data
+			parent->child[side] = 0;
 			goto delete_loop;
 			do
 			{
