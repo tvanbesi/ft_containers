@@ -184,21 +184,21 @@ namespace ft {
 
 		void get_nodes_by_depth(std::vector<std::vector<node_pointer> > & nodes, node_pointer node = 0, int depth = 0)
 		{
-			if (!node)
+			if (!node && depth == 0)
 			{
 				node = _root;
 				if (!node)
 					return ; //empty
 			}
-			if (node->left)
+			if (node && node->left)
 				get_nodes_by_depth(nodes, node->left, depth + 1);
 			else if (depth + 1 < nodes.size())
-				nodes[depth + 1].push_back(0); //dummy node
+				get_nodes_by_depth(nodes, 0, depth + 1);
 			nodes[depth].push_back(node);
-			if (node->right)
+			if (node && node->right)
 				get_nodes_by_depth(nodes, node->right, depth + 1);
 			else if (depth + 1 < nodes.size())
-				nodes[depth + 1].push_back(0); //dummy node
+				get_nodes_by_depth(nodes, 0, depth + 1);
 		}
 
 		size_t sp2(int x) //sum of power of 2
@@ -237,7 +237,7 @@ namespace ft {
 						std::cout << (*i2)->content->first << padding;
 					}
 					else
-						std::cout << "\033[37mN" << padding;
+						std::cout << "\033[37m " << padding;
 				}
 				std::cout << std::endl;
 				--i;
