@@ -56,7 +56,7 @@ namespace ft {
 					if (!tmp->parent)
 					{
 						_p = _p->right;
-						break ; //sentinel
+						break ;
 					}
 					else if (child_side(tmp) == LEFT)
 					{
@@ -94,7 +94,7 @@ namespace ft {
 					if (!tmp->parent)
 					{
 						_p = _p->left;
-						break ; //sentinel
+						break ;
 					}
 					else if (child_side(tmp) == RIGHT)
 					{
@@ -120,8 +120,6 @@ namespace ft {
 		bool operator==(const iterator_map<U>& rhs) const { return _p == rhs._p; }
 		template <typename U>
 		bool operator!=(const iterator_map<U>& rhs) const { return _p != rhs._p; }
-
-	private:
 
 		node_pointer	_p;
 

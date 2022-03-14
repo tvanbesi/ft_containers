@@ -39,15 +39,6 @@ namespace ft {
 			return r;
 		}
 
-		//node_pointer inorder_predecessor()
-		//{
-		//	node_pointer r;
-		//	r = this->left;
-		//	while (r->right)
-		//		r = r->right;
-		//	return r;
-		//}
-
 		void swap(node_pointer node)
 		{
 			pointer			tmp_content = this->content;

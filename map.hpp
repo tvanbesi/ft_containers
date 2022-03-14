@@ -174,13 +174,15 @@ namespace ft {
 		**	Modifiers
 		*/
 
-		pair<iterator, bool> insert(const value_type & val) { return insert_node(val); }
+		pair<iterator, bool> insert(const value_type & val) { return insert_node(val, _root); }
+
+		iterator insert(iterator position, const value_type & val) { return insert_node(val, position._p).first; }
 
 		template <class InputIterator>
 		void insert(InputIterator first, InputIterator last)
 		{
 			while (first != last)
-				insert_node(*first++);
+				insert_node(*first++, _root);
 		}
 
 		void erase(const key_type & k)
@@ -460,7 +462,7 @@ namespace ft {
 			} while ((parent = node->parent) != 0);
 		}
 
-		pair<iterator, bool> insert_node(const value_type & val)
+		pair<iterator, bool> insert_node(const value_type & val, node_pointer position)
 		{
 			if (!_root)
 			{
@@ -469,7 +471,12 @@ namespace ft {
 				place_sentinel();
 				return make_pair(iterator(_root), true);
 			}
-			node_pointer node = _root;
+			bool hint = position != _root ? true : false;
+			node_pointer node;
+			if (_comp(val.first, position->content->first))
+				node = _root;
+			else
+				node = position;
 			while (node)
 			{
 				if (_comp(val.first, node->content->first))
@@ -488,12 +495,13 @@ namespace ft {
 					{
 						node->right = create_node(val, node);
 						recolor_rotate(node->right);
-						node_pointer tmp = highest_node();
 						place_sentinel();
 						return make_pair(iterator(node->right), true);
 					}
 					node = node->right;
 				}
+				else if (hint)
+					return insert_node(val, _root);
 				else
 					break;
 			}
