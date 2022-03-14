@@ -97,6 +97,15 @@ namespace ft {
 			this->insert(x.begin(), x.end());
 		}
 
+		map & operator=(const map & x)
+		{
+			if (this == &x)
+				return *this;
+			this->clear();
+			this->insert(x.begin(), x.end());
+			return *this;
+		}
+
 		~map()
 		{
 			this->clear();
