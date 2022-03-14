@@ -185,23 +185,32 @@ namespace ft {
 				insert_node(*first++, _root);
 		}
 
-		void erase(const key_type & k)
+		void erase (iterator position) { erase(position->first); }
+
+		size_type erase(const key_type & k)
 		{
 			node_pointer p = _root;
-			while (p)
+			while (p && !is_sentinel(p))
 			{
-				if (_comp(k, p->content->first) && !is_sentinel(p->left))
+				if (_comp(k, p->content->first))
 					p = p->left;
-				else if (_comp(p->content->first, k) && !is_sentinel(p->right))
+				else if (_comp(p->content->first, k))
 					p = p->right;
 				else
 				{
 					_sentinel->parent->right = 0;
 					delete_node(p);
 					place_sentinel();
-					return ;
+					return 1;
 				}
 			}
+			return 0;
+		}
+
+		void erase (iterator first, iterator last)
+		{
+			while (first != last)
+				erase(first++);
 		}
 
 		void clear() { recursive_clear(_root); _root = 0; }
