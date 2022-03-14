@@ -213,6 +213,19 @@ namespace ft {
 				erase(first++);
 		}
 
+		void swap(map & x)
+		{
+			node_pointer tmp_root = _root;
+			node_pointer tmp_sentinel = _sentinel;
+			size_type tmp_size = _size;
+			_root = x._root;
+			_sentinel = x._sentinel;
+			_size = x._size;
+			x._root = tmp_root;
+			x._sentinel = tmp_sentinel;
+			x._size = tmp_size;
+		}
+
 		void clear() { recursive_clear(_root); _root = 0; }
 
 		/*
