@@ -157,7 +157,9 @@ namespace ft {
 					p = p->right;
 				else
 				{
+					_sentinel->parent->right = 0;
 					delete_node(p);
+					place_sentinel();
 					return ;
 				}
 			}
@@ -352,6 +354,15 @@ namespace ft {
 			_sentinel->parent = 0;
 		}
 
+		void place_sentinel()
+		{
+			if (!_root)
+				return ;
+			node_pointer tmp = highest_node();
+			tmp->right = _sentinel;
+			_sentinel->parent = tmp;
+		}
+
 		void rotate(node_pointer node, int rotation_side)
 		{
 			node_pointer parent = node->parent;
@@ -418,8 +429,7 @@ namespace ft {
 			{
 				_root = create_node(val, 0);
 				_root->color = BLACK;
-				_root->right = _sentinel;
-				_sentinel->parent = _root;
+				place_sentinel();
 				return make_pair(iterator(_root), true);
 			}
 			node_pointer node = _root;
@@ -442,8 +452,7 @@ namespace ft {
 						node->right = create_node(val, node);
 						recolor_rotate(node->right);
 						node_pointer tmp = highest_node();
-						tmp->right = _sentinel;
-						_sentinel->parent = tmp;
+						place_sentinel();
 						return make_pair(iterator(node->right), true);
 					}
 					node = node->right;
