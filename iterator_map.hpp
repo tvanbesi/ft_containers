@@ -40,7 +40,32 @@ namespace ft {
 
 		iterator_map& operator++()
 		{
-			//todo
+			if (is_sentinel(_p))
+				_p = _p->parent;
+			else if (_p->right)
+			{
+				_p = _p->right;
+				while (_p->left)
+					_p = _p->left;
+			}
+			else
+			{
+				node_pointer tmp = _p;
+				while (tmp)
+				{
+					if (!tmp->parent)
+					{
+						_p = _p->right;
+						break ; //sentinel
+					}
+					else if (child_side(tmp) == LEFT)
+					{
+						_p = tmp->parent;
+						break ;
+					}
+					tmp = tmp->parent;
+				}
+			}
 			return *this;
 		}
 
@@ -53,7 +78,32 @@ namespace ft {
 
 		iterator_map& operator--()
 		{
-			//todo
+			if (is_sentinel(_p))
+				_p = _p->parent;
+			else if (_p->left)
+			{
+				_p = _p->left;
+				while (_p->right)
+					_p = _p->right;
+			}
+			else
+			{
+				node_pointer tmp = _p;
+				while (tmp)
+				{
+					if (!tmp->parent)
+					{
+						_p = _p->left;
+						break ; //sentinel
+					}
+					else if (child_side(tmp) == RIGHT)
+					{
+						_p = tmp->parent;
+						break ;
+					}
+					tmp = tmp->parent;
+				}
+			}
 			return *this;
 		}
 

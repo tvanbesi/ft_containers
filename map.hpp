@@ -16,6 +16,7 @@
 # include "pair.hpp"
 # include "node.hpp"
 # include "iterator_map.hpp"
+# include "reverse_iterator.hpp"
 
 namespace ft {
 
@@ -75,11 +76,57 @@ namespace ft {
 		*/
 
 		explicit map (const key_compare & comp = key_compare(), const allocator_type & alloc = allocator_type())
-		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0) {}
+		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0)
+		{
+			create_sentinel();
+		}
+
+		~map()
+		{
+			this->clear();
+			_alnode.destroy(_sentinel);
+			_alnode.deallocate(_sentinel, 1);
+		}
 
 		/*
 		**	Iterator
 		*/
+
+		iterator begin()
+		{
+			if (!_root)
+				return iterator(); //sentinel?
+			return iterator(smallest_node());
+		}
+
+		const_iterator begin() const
+		{
+			if (!_root)
+				return const_iterator(); //sentinel?
+			return const_iterator(smallest_node());
+		}
+
+		iterator end() { return iterator(_sentinel); }
+
+		const_iterator end() const { return const_iterator(_sentinel); }
+
+		reverse_iterator rbegin()
+		{
+			if (!_root)
+				return reverse_iterator(); //sentinel?
+			return reverse_iterator(highest_node());
+		}
+
+		const_reverse_iterator rbegin() const
+		{
+			if (!_root)
+				return const_reverse_iterator(); //sentinel?
+			return const_reverse_iterator(highest_node());
+		}
+
+		reverse_iterator rend() { return reverse_iterator(this->begin()); }
+
+		const_reverse_iterator rend() const { return const_reverse_iterator(this->begin()); }
 
 		/*
 		**	Capacity
@@ -104,9 +151,9 @@ namespace ft {
 			node_pointer p = _root;
 			while (p)
 			{
-				if (_comp(k, p->content->first))
+				if (_comp(k, p->content->first) && !is_sentinel(p->left))
 					p = p->left;
-				else if (_comp(p->content->first, k))
+				else if (_comp(p->content->first, k) && !is_sentinel(p->right))
 					p = p->right;
 				else
 				{
@@ -115,6 +162,8 @@ namespace ft {
 				}
 			}
 		}
+
+		void clear() { recursive_clear(_root); _root = 0; }
 
 		/*
 		**	Observers
@@ -152,10 +201,10 @@ namespace ft {
 					return ;
 				}
 			}
-			if (node->left)
+			if (node->left && !is_sentinel(node->left))
 				print_tree(node->left);
 			std::cout << node->content->first << ' ';
-			if (node->right)
+			if (node->right && !is_sentinel(node->right))
 				print_tree(node->right);
 		}
 
@@ -170,7 +219,7 @@ namespace ft {
 
 		int get_max_depth(node_pointer root)
 		{
-			if (!root)
+			if (!root || is_sentinel(root))
 				return 0;
 			int depth1 = get_max_depth(root->left);
 			int depth2 = get_max_depth(root->right);
@@ -185,12 +234,12 @@ namespace ft {
 				if (!node)
 					return ; //empty
 			}
-			if (node && node->left)
+			if (node && node->left && !is_sentinel(node->left))
 				get_nodes_by_depth(nodes, node->left, depth + 1);
 			else if (depth + 1 < nodes.size())
 				get_nodes_by_depth(nodes, 0, depth + 1);
 			nodes[depth].push_back(node);
-			if (node && node->right)
+			if (node && node->right && !is_sentinel(node->right))
 				get_nodes_by_depth(nodes, node->right, depth + 1);
 			else if (depth + 1 < nodes.size())
 				get_nodes_by_depth(nodes, 0, depth + 1);
@@ -271,6 +320,7 @@ namespace ft {
 		*/
 
 		node_pointer	_root;
+		node_pointer	_sentinel;
 		allocator_type	_alloc;
 		alnode			_alnode;
 		key_compare		_comp;
@@ -291,6 +341,15 @@ namespace ft {
 			new_node->color = RED;
 			++_size;
 			return new_node;
+		}
+
+		void create_sentinel()
+		{
+			_sentinel = _alnode.allocate(1);
+			_sentinel->content = 0;
+			_sentinel->left = 0;
+			_sentinel->right = 0;
+			_sentinel->parent = 0;
 		}
 
 		void rotate(node_pointer node, int rotation_side)
@@ -332,7 +391,7 @@ namespace ft {
 				//parent is RED and grandparent exists
 				int side = child_side(parent);
 				uncle = grandparent->child[1 - side];
-				if (!uncle || uncle->color == BLACK)
+				if (!uncle || is_sentinel(uncle) || uncle->color == BLACK)
 				{
 					if (node == parent->child[1 - side])
 					{
@@ -359,6 +418,8 @@ namespace ft {
 			{
 				_root = create_node(val, 0);
 				_root->color = BLACK;
+				_root->right = _sentinel;
+				_sentinel->parent = _root;
 				return make_pair(iterator(_root), true);
 			}
 			node_pointer node = _root;
@@ -366,7 +427,7 @@ namespace ft {
 			{
 				if (_comp(val.first, node->content->first))
 				{
-					if (!node->left)
+					if (!node->left || is_sentinel(node->left))
 					{
 						node->left = create_node(val, node);
 						recolor_rotate(node->left);
@@ -376,10 +437,13 @@ namespace ft {
 				}
 				else if (_comp(node->content->first, val.first))
 				{
-					if (!node->right)
+					if (!node->right || is_sentinel(node->right))
 					{
 						node->right = create_node(val, node);
 						recolor_rotate(node->right);
+						node_pointer tmp = highest_node();
+						tmp->right = _sentinel;
+						_sentinel->parent = tmp;
 						return make_pair(iterator(node->right), true);
 					}
 					node = node->right;
@@ -388,6 +452,17 @@ namespace ft {
 					break;
 			}
 			return make_pair(iterator(node), false);
+		}
+
+		void recursive_clear(node_pointer node)
+		{
+			if (!node || is_sentinel(node))
+				return ;
+			if (node->left)
+				recursive_clear(node->left);
+			if (node->right)
+				recursive_clear(node->right);
+			delete_node_data(node);
 		}
 
 		void delete_node_data(node_pointer node)
@@ -507,6 +582,26 @@ namespace ft {
 				parent->color = BLACK;
 				distant_nephew->color = BLACK;
 				return ;
+		}
+
+		node_pointer smallest_node()
+		{
+			if (!_root)
+				return 0;
+			node_pointer r = _root;
+			while (r->left && !is_sentinel(r->left))
+				r = r->left;
+			return r;
+		}
+
+		node_pointer highest_node()
+		{
+			if (!_root)
+				return 0;
+			node_pointer r = _root;
+			while (r->right && !is_sentinel(r->right))
+				r = r->right;
+			return r;
 		}
 
 	};

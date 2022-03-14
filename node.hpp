@@ -5,9 +5,12 @@ enum Node_color { BLACK, RED };
 
 # define LEFT	0
 # define RIGHT	1
+# define END	0
+# define REND	1
 # define left	child[LEFT]
 # define right	child[RIGHT]
 # define child_side(node) (node == node->parent->right ? RIGHT : LEFT)
+# define is_sentinel(node) (node->content == 0 ? true : false)
 
 namespace ft {
 
@@ -31,19 +34,19 @@ namespace ft {
 		{
 			node_pointer r;
 			r = this->right;
-			while (r->left)
+			while (r->left && !is_sentinel(r->left))
 				r = r->left;
 			return r;
 		}
 
-		node_pointer inorder_predecessor()
-		{
-			node_pointer r;
-			r = this->left;
-			while (r->right)
-				r = r->right;
-			return r;
-		}
+		//node_pointer inorder_predecessor()
+		//{
+		//	node_pointer r;
+		//	r = this->left;
+		//	while (r->right)
+		//		r = r->right;
+		//	return r;
+		//}
 
 		void swap(node_pointer node)
 		{
