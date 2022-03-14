@@ -81,6 +81,22 @@ namespace ft {
 			create_sentinel();
 		}
 
+		template <class InputIterator>
+		map (InputIterator first, InputIterator last, const key_compare & comp = key_compare(),
+			const allocator_type & alloc = allocator_type())
+		: _root(0), _alloc(alloc), _alnode(alloc), _comp(comp), _size(0)
+		{
+			create_sentinel();
+			this->insert(first, last);
+		}
+
+		map (const map & x)
+		: _root(0), _alloc(x._alloc), _alnode(x._alnode), _comp(x._comp), _size(0)
+		{
+			create_sentinel();
+			this->insert(x.begin(), x.end());
+		}
+
 		~map()
 		{
 			this->clear();
@@ -145,6 +161,13 @@ namespace ft {
 		*/
 
 		pair<iterator, bool> insert(const value_type & val) { return insert_node(val); }
+
+		template <class InputIterator>
+		void insert(InputIterator first, InputIterator last)
+		{
+			while (first != last)
+				insert_node(*first++);
+		}
 
 		void erase(const key_type & k)
 		{
@@ -593,7 +616,7 @@ namespace ft {
 				return ;
 		}
 
-		node_pointer smallest_node()
+		node_pointer smallest_node() const
 		{
 			if (!_root)
 				return 0;
@@ -603,7 +626,7 @@ namespace ft {
 			return r;
 		}
 
-		node_pointer highest_node()
+		node_pointer highest_node() const
 		{
 			if (!_root)
 				return 0;
