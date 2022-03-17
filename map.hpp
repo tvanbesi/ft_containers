@@ -139,14 +139,14 @@ namespace ft {
 		{
 			if (this->empty())
 				return this->rend();
-			return reverse_iterator(highest_node());
+			return reverse_iterator(this->end());
 		}
 
 		const_reverse_iterator rbegin() const
 		{
 			if (this->empty())
 				return this->rend();
-			return const_reverse_iterator(highest_node());
+			return const_reverse_iterator(this->end());
 		}
 
 		reverse_iterator rend() { return reverse_iterator(this->begin()); }
@@ -584,7 +584,6 @@ namespace ft {
 				node_pointer tmp_left = tmp->left;
 				node_pointer tmp_right = tmp->right;
 				enum Node_color tmp_color = tmp->color;
-				value_type* tmp_content = tmp->content;
 				int tmp_side = child_side(tmp);
 				bool is_root = (node == _root);
 
@@ -594,7 +593,7 @@ namespace ft {
 				tmp->left = node->left;
 				if (tmp->left)
 					tmp->left->parent = tmp;
-				tmp->right = node->right;
+				tmp->right = tmp != node->right ? node->right : 0; //in case inorder successor is the node child
 				if (tmp->right)
 					tmp->right->parent = tmp;
 				tmp->color = node->color;

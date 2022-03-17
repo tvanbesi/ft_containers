@@ -39,9 +39,9 @@ namespace ft {
 			return r;
 		}
 
-		void swap(node_pointer node)
-		{
-		}
+		//void swap(node_pointer node)
+		//{
+		//}
 	};
 
 }
