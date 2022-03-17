@@ -9,8 +9,8 @@ enum Node_color { BLACK, RED };
 # define REND	1
 # define left	child[LEFT]
 # define right	child[RIGHT]
-# define child_side(node) (node == node->parent->right ? RIGHT : LEFT)
-# define is_sentinel(node) (node->content == 0 ? true : false)
+# define child_side(node_pointer) (node_pointer == node_pointer->parent->right ? RIGHT : LEFT)
+# define is_sentinel(node_pointer) (node_pointer->content == 0 ? true : false)
 
 namespace ft {
 
@@ -41,9 +41,6 @@ namespace ft {
 
 		void swap(node_pointer node)
 		{
-			pointer			tmp_content = this->content;
-			this->content = node->content;
-			node->content = tmp_content;
 		}
 	};
 

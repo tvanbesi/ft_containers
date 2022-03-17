@@ -40,9 +40,7 @@ namespace ft {
 
 		iterator_map& operator++()
 		{
-			if (is_sentinel(_p))
-				_p = _p->parent;
-			else if (_p->right)
+			if (_p->right)
 			{
 				_p = _p->right;
 				while (_p->left)

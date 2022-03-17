@@ -119,15 +119,15 @@ namespace ft {
 
 		iterator begin()
 		{
-			if (!_root)
-				return iterator(); //sentinel?
+			if (this->empty())
+				return this->end();
 			return iterator(smallest_node());
 		}
 
 		const_iterator begin() const
 		{
-			if (!_root)
-				return const_iterator(); //sentinel?
+			if (this->empty())
+				return this->end();
 			return const_iterator(smallest_node());
 		}
 
@@ -137,15 +137,15 @@ namespace ft {
 
 		reverse_iterator rbegin()
 		{
-			if (!_root)
-				return reverse_iterator(); //sentinel?
+			if (this->empty())
+				return this->rend();
 			return reverse_iterator(highest_node());
 		}
 
 		const_reverse_iterator rbegin() const
 		{
-			if (!_root)
-				return const_reverse_iterator(); //sentinel?
+			if (this->empty())
+				return this->rend();
 			return const_reverse_iterator(highest_node());
 		}
 
@@ -239,6 +239,21 @@ namespace ft {
 		**	Operations
 		*/
 
+		iterator find (const key_type & k)
+		{
+			node_pointer node = _root;
+			while (node && !is_sentinel(node))
+			{
+				if (_comp(k, node->content->first))
+					node = node->left;
+				else if (_comp(node->content->first), k)
+					node = node->right;
+				else
+					return iterator(node);
+			}
+			return this->end();
+		}
+
 		/*
 		**	Allocator
 		*/
@@ -299,12 +314,12 @@ namespace ft {
 			}
 			if (node && node->left && !is_sentinel(node->left))
 				get_nodes_by_depth(nodes, node->left, depth + 1);
-			else if (depth + 1 < nodes.size())
+			else if ((size_t)(depth + 1) < nodes.size())
 				get_nodes_by_depth(nodes, 0, depth + 1);
 			nodes[depth].push_back(node);
 			if (node && node->right && !is_sentinel(node->right))
 				get_nodes_by_depth(nodes, node->right, depth + 1);
-			else if (depth + 1 < nodes.size())
+			else if ((size_t)(depth + 1) < nodes.size())
 				get_nodes_by_depth(nodes, 0, depth + 1);
 		}
 
@@ -417,7 +432,7 @@ namespace ft {
 
 		void place_sentinel()
 		{
-			if (!_root)
+			if (this->empty())
 				return ;
 			node_pointer tmp = highest_node();
 			tmp->right = _sentinel;
@@ -447,7 +462,7 @@ namespace ft {
 
 		void recolor_rotate(node_pointer node)
 		{
-			node_pointer uncle, parent, grandparent, tmp;
+			node_pointer uncle, parent, grandparent;
 
 			parent = node->parent;
 			do
@@ -491,7 +506,7 @@ namespace ft {
 				_root = create_node(val, 0);
 				_root->color = BLACK;
 				place_sentinel();
-				return make_pair(iterator(_root), true);
+				return ft::make_pair(iterator(_root), true);
 			}
 			bool hint = position != _root ? true : false;
 			node_pointer node;
@@ -507,7 +522,7 @@ namespace ft {
 					{
 						node->left = create_node(val, node);
 						recolor_rotate(node->left);
-						return make_pair(iterator(node->left), true);
+						return ft::make_pair(iterator(node->left), true);
 					}
 					node = node->left;
 				}
@@ -518,7 +533,7 @@ namespace ft {
 						node->right = create_node(val, node);
 						recolor_rotate(node->right);
 						place_sentinel();
-						return make_pair(iterator(node->right), true);
+						return ft::make_pair(iterator(node->right), true);
 					}
 					node = node->right;
 				}
@@ -527,7 +542,7 @@ namespace ft {
 				else
 					break;
 			}
-			return make_pair(iterator(node), false);
+			return ft::make_pair(iterator(node), false);
 		}
 
 		void recursive_clear(node_pointer node)
@@ -554,6 +569,7 @@ namespace ft {
 
 		void delete_node(node_pointer node)
 		{
+			int side;
 			//simple cases:
 			if (node->parent == 0 && node->right == 0 && node->left == 0) //node is root and no child
 			{
@@ -564,8 +580,41 @@ namespace ft {
 			else if (node->right && node->left)
 			{
 				node_pointer tmp = node->inorder_successor();
-				node->swap(node->inorder_successor());
-				node = tmp;
+				node_pointer tmp_parent = tmp->parent;
+				node_pointer tmp_left = tmp->left;
+				node_pointer tmp_right = tmp->right;
+				enum Node_color tmp_color = tmp->color;
+				value_type* tmp_content = tmp->content;
+				int tmp_side = child_side(tmp);
+				bool is_root = (node == _root);
+
+				tmp->parent = node->parent;
+				if (tmp->parent)
+					tmp->parent->child[child_side(node)] = tmp;
+				tmp->left = node->left;
+				if (tmp->left)
+					tmp->left->parent = tmp;
+				tmp->right = node->right;
+				if (tmp->right)
+					tmp->right->parent = tmp;
+				tmp->color = node->color;
+
+				node->parent = node != tmp_parent ? tmp_parent : tmp;
+				if (node->parent)
+					node->parent->child[tmp_side] = node;
+				node->left = tmp_left;
+				if (node->left)
+					node->left->parent = node;
+				node->right = tmp_right;
+				if (node->right)
+					node->right->parent = node;
+				node->color = tmp_color;
+
+				if (is_root)
+				{
+					_root = tmp;
+					_root->parent = 0;
+				}
 			}
 			//at this point node only has at most one child
 			if (node->color == RED)
@@ -602,7 +651,6 @@ namespace ft {
 			}
 			//complex cases, here node is BLACK, not the root, and has no child
 			node_pointer parent = node->parent;
-			int side;
 			node_pointer sibling, close_nephew, distant_nephew;
 
 			side = child_side(node);
@@ -662,7 +710,7 @@ namespace ft {
 
 		node_pointer smallest_node() const
 		{
-			if (!_root)
+			if (this->empty())
 				return 0;
 			node_pointer r = _root;
 			while (r->left && !is_sentinel(r->left))
@@ -672,7 +720,7 @@ namespace ft {
 
 		node_pointer highest_node() const
 		{
-			if (!_root)
+			if (this->empty())
 				return 0;
 			node_pointer r = _root;
 			while (r->right && !is_sentinel(r->right))
