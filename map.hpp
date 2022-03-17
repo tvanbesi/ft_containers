@@ -174,15 +174,15 @@ namespace ft {
 		**	Modifiers
 		*/
 
-		pair<iterator, bool> insert(const value_type & val) { return insert_node(val, _root); }
+		pair<iterator, bool> insert(const value_type & val) { return insert_node(val); }
 
-		iterator insert(iterator position, const value_type & val) { return insert_node(val, position._p).first; }
+		iterator insert(iterator position, const value_type & val) { (void)position; return insert_node(val).first; }
 
 		template <class InputIterator>
 		void insert(InputIterator first, InputIterator last)
 		{
 			while (first != last)
-				insert_node(*first++, _root);
+				insert_node(*first++);
 		}
 
 		void erase (iterator position) { erase(position->first); }
@@ -499,7 +499,7 @@ namespace ft {
 			} while ((parent = node->parent) != 0);
 		}
 
-		pair<iterator, bool> insert_node(const value_type & val, node_pointer position)
+		pair<iterator, bool> insert_node(const value_type & val)
 		{
 			if (!_root)
 			{
@@ -508,17 +508,12 @@ namespace ft {
 				place_sentinel();
 				return ft::make_pair(iterator(_root), true);
 			}
-			bool hint = position != _root ? true : false;
-			node_pointer node;
-			if (_comp(val.first, position->content->first))
-				node = _root;
-			else
-				node = position;
+			node_pointer node = _root;
 			while (node)
 			{
 				if (_comp(val.first, node->content->first))
 				{
-					if (!node->left || is_sentinel(node->left))
+					if (!node->left)
 					{
 						node->left = create_node(val, node);
 						recolor_rotate(node->left);
@@ -528,7 +523,7 @@ namespace ft {
 				}
 				else if (_comp(node->content->first, val.first))
 				{
-					if (!node->right || is_sentinel(node->right))
+					if (!node->right || is_sentinel(node->right)) //can be optimized
 					{
 						node->right = create_node(val, node);
 						recolor_rotate(node->right);
@@ -537,8 +532,6 @@ namespace ft {
 					}
 					node = node->right;
 				}
-				else if (hint)
-					return insert_node(val, _root);
 				else
 					break;
 			}
