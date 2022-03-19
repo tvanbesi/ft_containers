@@ -254,6 +254,138 @@ namespace ft {
 			return this->end();
 		}
 
+		const_iterator find (const key_type & k) const
+		{
+			node_pointer node = _root;
+			while (node && !is_sentinel(node))
+			{
+				if (_comp(k, node->content->first))
+					node = node->left;
+				else if (_comp(node->content->first), k)
+					node = node->right;
+				else
+					return const_iterator(node);
+			}
+			return this->end();
+		}
+
+		size_type count (const key_type & k) const
+		{
+			if (find(k) != this->end())
+				return 1;
+			return 0;
+		}
+
+		iterator lower_bound (const key_type & k)
+		{
+			if (this->empty())
+				return this->end();
+			iterator previous = this->begin();
+			iterator current = ++this->begin();
+			if (_comp(k, previous->first))
+				return previous;
+			while (current != this->end())
+			{
+				if (_comp(previous->first, k))
+				{
+					if (_comp(k, current->first))
+						return current;
+				}
+				else if (!_comp(k, previous->first))
+					return previous;
+				previous = current++;
+			}
+			if (_comp(k, previous->first))
+				return previous;
+			else if (!_comp(previous->first, k))
+				return previous;
+			return current;
+		}
+
+		const_iterator lower_bound (const key_type & k) const
+		{
+			if (this->empty())
+				return this->end();
+			const_iterator previous = this->begin();
+			const_iterator current = ++this->begin();
+			if (_comp(k, previous->first))
+				return previous;
+			while (current != this->end())
+			{
+				if (_comp(previous->first, k))
+				{
+					if (_comp(k, current->first))
+						return current;
+				}
+				else if (!_comp(k, previous->first))
+					return previous;
+				previous = current++;
+			}
+			if (_comp(k, previous->first))
+				return previous;
+			else if (!_comp(previous->first, k))
+				return previous;
+			return current;
+		}
+
+		iterator upper_bound (const key_type & k)
+		{
+			if (this->empty())
+				return this->end();
+			iterator previous = this->begin();
+			iterator current = ++this->begin();
+			if (_comp(k, previous->first))
+				return previous;
+			while (current != this->end())
+			{
+				if (_comp(previous->first, k))
+				{
+					if (_comp(k, current->first))
+						return current;
+				}
+				else if (!_comp(k, previous->first))
+					return current;
+				previous = current++;
+			}
+			if (_comp(k, previous->first))
+				return previous;
+			return current;
+		}
+
+		const_iterator upper_bound (const key_type & k) const
+		{
+			if (this->empty())
+				return this->end();
+			const_iterator previous = this->begin();
+			const_iterator current = ++this->begin();
+			if (_comp(k, previous->first))
+				return previous;
+			while (current != this->end())
+			{
+				if (_comp(previous->first, k))
+				{
+					if (_comp(k, current->first))
+						return current;
+				}
+				else if (!_comp(k, previous->first))
+					return current;
+				previous = current++;
+			}
+			if (_comp(k, previous->first))
+				return previous;
+			return current;
+		}
+
+		pair<iterator, iterator> equal_range (const key_type & k)
+		{
+			return ft::make_pair(this->lower_bound(k), this->upper_bound(k));
+		}
+
+		pair<const_iterator, const_iterator> equal_range (const key_type & k) const
+		{
+			return ft::make_pair(this->lower_bound(k), this->upper_bound(k));
+		}
+
 		/*
 		**	Allocator
 		*/
