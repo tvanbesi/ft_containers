@@ -264,6 +264,8 @@ namespace ft {
 		void
 			insert(iterator position, size_type n, const value_type& val)
 		{
+			if (n == 0)
+				return ;
 			if (position == this->end())
 			{
 				if (_size + n > _capacity)
