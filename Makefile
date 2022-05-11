@@ -1,8 +1,7 @@
 SRCS		=	main.cpp
 OBJS		= ${SRCS:.cpp=.o}
 CPPC		= clang++
-#CPPFLAGS	= -Wall -Wextra -Werror -std=c++98
-CPPFLAGS	= -std=c++98
+CPPFLAGS	= -Wall -Wextra -Werror -std=c++98
 NAME		= a.out
 RM			= rm -f
 
@@ -14,7 +13,7 @@ ${NAME} :	${OBJS}
 clean :
 			${RM} ${OBJS}
 fclean :	clean
-			${RM} ${NAME}
+			${RM} *.out
 re :		fclean all
 .PHONY :
 			all ${NAME} clean fclean re
